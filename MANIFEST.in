@@ -1,0 +1,5 @@
+include *
+exclude *~
+exclude .*
+include tmp/README.rst
+recursive-include vipe *
