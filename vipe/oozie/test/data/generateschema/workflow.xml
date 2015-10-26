@@ -1,0 +1,28 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="generate_schema">
+	
+	<parameters>
+	</parameters>
+    
+    <start to="generate-schema" />
+
+	<action name="generate-schema">
+	    <java>
+    		<job-tracker>${jobTracker}</job-tracker>
+        	<name-node>${nameNode}</name-node>
+	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <arg>${inputport_classname}</arg>
+	        <arg>eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata</arg>
+	        <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
+	        <arg>eu.dnetlib.iis.audit.schemas.Fault</arg>
+	        <capture-output />
+	    </java>
+	    <ok to="end" />
+	    <error to="fail" />
+	</action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message: [${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <end name="end"/>
+</workflow-app>
+

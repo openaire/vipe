@@ -1,0 +1,89 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_preprocessing_main">
+
+    <parameters>
+        <property>
+            <name>active_referenceextraction_project</name>
+            <value>true</value>
+            <description>flag indicating project reference extraction should be enabled</description>
+	</property>
+        <property>
+	    <name>input_document_text</name>
+	    <description>input document text directory</description>
+	</property>
+        <property>
+	    <name>input_dataset</name>
+	    <description>input dataset directory</description>
+	</property>
+        <property>
+	    <name>output_document_to_dataset</name>
+	    <description>dataset reference extraction output directory</description>
+	</property>
+		
+    </parameters>
+
+    <start to="decision-referenceextraction_dataset" />
+
+    <!-- start of dataset reference extraction block -->
+    <decision name="decision-referenceextraction_dataset">
+        <switch>
+            <case to="referenceextraction_dataset">${active_referenceextraction_dataset eq "true"}</case>
+            <default to="skip-referenceextraction_dataset"/>
+        </switch>
+    </decision>
+    
+    <action name="referenceextraction_dataset">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/referenceextraction_dataset</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/referenceextraction_dataset/working_dir</value>
+                </property>
+            	<property>
+					<name>input_document_text</name>
+					<value>${input_document_text}</value>
+				</property>
+				<property>
+					<name>input_dataset</name>
+					<value>${input_dataset}</value>
+				</property>
+				<property>
+					<name>output_document_to_dataset</name>
+					<!-- referenceextraction_dataset directory is created at subworkflow prepare phase -->
+					<value>${output_document_to_dataset}</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="joining"/>
+		<error to="fail" />
+    </action>
+    
+    <action name="skip-referenceextraction_dataset">
+        <java>
+			<prepare>
+				<!-- notice: directory have to aligned with skipped action output -->
+				<delete path="${nameNode}${workingDir}/referenceextraction_dataset" />
+				<delete path="${nameNode}${output_document_to_dataset}"/>
+				<mkdir path="${nameNode}${workingDir}/referenceextraction_dataset" />
+				<mkdir path="${nameNode}${output_document_to_dataset}"/>
+			</prepare>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{referenceextraction_dataset,
+				eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+            <!-- notice: directory have to aligned with skipped action output -->
+            <arg>-Oreferenceextraction_dataset=${output_document_to_dataset}</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+    <!-- end of dataset reference extraction block -->
+
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>
+	<end name="end" />
+</workflow-app>

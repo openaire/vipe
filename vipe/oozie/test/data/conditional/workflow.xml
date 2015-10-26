@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="citationmatching_chain">
+
+	<parameters>
+		<property>
+			<name>remove_sideproducts</name>
+			<value>true</value>
+		</property>
+	</parameters>
+
+	<global>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+		</configuration>
+	</global>
+
+	<start to="make_decision" />
+
+	<decision name="make_decision">
+		<switch>
+			<case to="remove_sideproducts">${remove_sideproducts eq "true"}</case>
+			<default to="end" />
+		</switch>
+	</decision>
+
+	<action name="remove_sideproducts">
+		<fs>
+			<delete path="${nameNode}${workingDir}/coansys" />
+		</fs>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]
+		</message>
+	</kill>
+	<end name="end" />
+</workflow-app>
+
+
