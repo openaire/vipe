@@ -1,0 +1,30 @@
+!OozieGraph
+nodes:
+  end: !End {}
+  fail: !Kill {}
+  pig_node: !PigAction
+    arguments: []
+    configuration:
+      mapred.compress.map.output: 'true'
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    ok_node: end
+    params:
+    - person=${workingDir}/producer/person.csv
+    - person_id=${workingDir}/pig_node/person_id
+    script: script.pig
+  producer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.examples.java.TextDataProducer
+    - -Operson=${workingDir}/producer/person.csv
+    - -Odocument=${workingDir}/producer/doc.csv
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: pig_node
+  start: !Start
+    next: producer
+parameters: {}
+

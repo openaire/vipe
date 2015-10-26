@@ -14,15 +14,41 @@
 
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
+import re
+pattern_whitespace = re.compile(r'\s+')
+
 def properties_to_dict(elem):
     """Take XML element containing properties and turn it into dictionary"""
     d = {}
     for child in elem:
         assert child.tag == 'property'
-        name = child.find('name').text
+        name = get_text(child.find('name'))
         value = None
         value_elem = child.find('value')
         if value_elem is not None:
-            value = value_elem.text
+            value = value_elem.text.strip()
         d[name] = value
     return d
+
+def get_text(elem):
+    """Get the text content of the element and clean it up.
+    
+    Returns:
+        string
+    """
+    stripped = elem.text.strip()
+    return re.sub(pattern_whitespace, ' ', stripped)
+
+def findall_to_text(elem, child_tag_name):
+    """
+    Returns:
+        List[string]
+    """
+    return [get_text(e) for e in elem.findall(child_tag_name)]
+
+def find_to_text(elem, child_tag_name):
+    """
+    Returns:
+        string
+    """
+    return get_text(elem.find(child_tag_name))

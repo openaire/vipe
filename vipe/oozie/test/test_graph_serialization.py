@@ -19,7 +19,7 @@ from pkg_resources import resource_stream
 from vipe.oozie.graph_serialization import from_yaml, to_yaml
 
 def test_simple_java_workflow():
-    check('data/simple_java_workflow/expected.yaml')
+    check('data/java/workflow.yaml')
 
 def check(yaml_file_path):
     graph1 = from_yaml(__read_string(yaml_file_path))

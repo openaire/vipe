@@ -1,0 +1,73 @@
+!OozieGraph
+nodes:
+  end: !End {}
+  fail: !Kill {}
+  generate-schema: !JavaAction
+    args:
+    - ${inputport_classname}
+    - eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata
+    - eu.dnetlib.iis.metadataextraction.schemas.DocumentText
+    - eu.dnetlib.iis.audit.schemas.Fault
+    captures_output: true
+    configuration: {}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator
+    ok_node: metadata_extractor
+  metadata_extractor: !JavaMapReduceAction
+    configuration:
+      avro.mapreduce.multipleoutputs: ${output_name_meta} ${output_name_plaintext}
+        ${output_name_fault}
+      avro.mapreduce.multipleoutputs.namedOutput.${output_name_fault}.format: org.apache.avro.mapreduce.AvroKeyOutputFormat
+      avro.mapreduce.multipleoutputs.namedOutput.${output_name_fault}.keyschema: ${wf:actionData('generate-schema')['eu.dnetlib.iis.audit.schemas.Fault']}
+      avro.mapreduce.multipleoutputs.namedOutput.${output_name_meta}.format: org.apache.avro.mapreduce.AvroKeyOutputFormat
+      avro.mapreduce.multipleoutputs.namedOutput.${output_name_meta}.keyschema: ${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata']}
+      avro.mapreduce.multipleoutputs.namedOutput.${output_name_plaintext}.format: org.apache.avro.mapreduce.AvroKeyOutputFormat
+      avro.mapreduce.multipleoutputs.namedOutput.${output_name_plaintext}.keyschema: ${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}
+      avro.schema.input.key: ${wf:actionData('generate-schema')[wf:conf('inputport_classname')]}
+      excluded.ids: ${excluded_ids}
+      import.content.connection.timeout: ${content_connection_timeout}
+      import.content.max.file.size.mb: ${max_file_size_mb}
+      import.content.read.timeout: ${content_read_timeout}
+      io.serializations: org.apache.hadoop.io.serializer.WritableSerialization,org.apache.hadoop.io.serializer.avro.AvroSpecificSerialization,org.apache.hadoop.io.serializer.avro.AvroReflectSerialization,org.apache.avro.hadoop.io.AvroSerialization
+      log.fault.processing.time.threshold.secs: ${log_fault_processing_time_threshold_secs}
+      mapred.child.java.opts: ${mapred_child_java_opts}
+      mapred.input.dir: ${input}
+      mapred.job.queue.name: ${queueName}
+      mapred.mapoutput.key.class: org.apache.avro.mapred.AvroKey
+      mapred.mapoutput.value.class: org.apache.avro.mapred.AvroValue
+      mapred.mapper.new-api: 'true'
+      mapred.max.split.size: ${mapred_max_split_size}
+      mapred.output.dir: ${output_root}
+      mapred.output.key.class: org.apache.avro.mapred.AvroKey
+      mapred.output.key.comparator.class: org.apache.avro.hadoop.io.AvroKeyComparator
+      mapred.output.value.class: org.apache.avro.mapred.AvroValue
+      mapred.output.value.groupfn.class: org.apache.avro.hadoop.io.AvroKeyComparator
+      mapred.reduce.tasks: '0'
+      mapred.reducer.new-api: 'true'
+      mapred.task.timeout: '3600000'
+      mapreduce.inputformat.class: org.apache.avro.mapreduce.AvroKeyInputFormat
+      mapreduce.map.class: eu.dnetlib.iis.workflows.metadataextraction.${processing_mode}
+      output.fault: ${output_name_fault}
+      output.meta: ${output_name_meta}
+      output.plaintext: ${output_name_plaintext}
+      rpc.engine.org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolPB: org.apache.hadoop.ipc.ProtobufRpcEngine
+    error_node: fail
+    ok_node: end
+  start: !Start
+    next: generate-schema
+parameters:
+  content_connection_timeout: '60000'
+  content_read_timeout: '60000'
+  excluded_ids: $UNDEFINED$
+  input: null
+  inputport_classname: eu.dnetlib.iis.importer.schemas.DocumentContent
+  log_fault_processing_time_threshold_secs: '300'
+  mapred_child_java_opts: -Xmx4096m
+  mapred_max_split_size: '50000'
+  max_file_size_mb: $UNDEFINED$
+  output_name_fault: fault
+  output_name_meta: meta
+  output_name_plaintext: plaintext
+  output_root: null
+  processing_mode: MetadataExtractorMapper
+

@@ -55,7 +55,7 @@
 				</property>
             </configuration>
         </sub-workflow>
-		<ok to="joining"/>
+		<ok to="end"/>
 		<error to="fail" />
     </action>
     

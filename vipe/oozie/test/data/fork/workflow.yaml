@@ -1,0 +1,34 @@
+!OozieGraph
+nodes:
+  document_producer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.examples.java.DocumentProducer
+    - -Odocument=${output_document}
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: join
+  end: !End {}
+  fail: !Kill {}
+  fork: !Fork
+    nodes:
+    - person_producer
+    - document_producer
+  join: !Join
+    next: end
+  person_producer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.examples.java.PersonProducer
+    - -Operson=${output_person}
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: join
+  start: !Start
+    next: fork
+parameters: {}
+

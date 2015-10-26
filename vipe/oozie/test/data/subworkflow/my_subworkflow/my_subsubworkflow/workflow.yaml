@@ -1,0 +1,31 @@
+!OozieGraph
+nodes:
+  cloner1: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.examples.java.PersonCloner
+    - -Iperson=${input_person}
+    - -Operson=${workingDir}/cloner1/person
+    - -Pcopies=${param_copies_count}
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: cloner2
+  cloner2: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.examples.java.PersonCloner
+    - -Iperson=${workingDir}/cloner1/person
+    - -Operson=${output_person}
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: end
+  end: !End {}
+  fail: !Kill {}
+  start: !Start
+    next: cloner1
+parameters: {}
+

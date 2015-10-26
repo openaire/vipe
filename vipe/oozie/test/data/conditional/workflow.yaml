@@ -1,0 +1,19 @@
+!OozieGraph
+nodes:
+  end: !End {}
+  fail: !Kill {}
+  make_decision: !Decision
+    cases:
+    - !DecisionCase
+      condition: ${remove_sideproducts eq "true"}
+      target: remove_sideproducts
+    default_node: end
+  remove_sideproducts: !FSAction
+    configuration: {}
+    error_node: fail
+    ok_node: end
+  start: !Start
+    next: make_decision
+parameters:
+  remove_sideproducts: 'true'
+

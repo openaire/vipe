@@ -1,0 +1,50 @@
+!OozieGraph
+nodes:
+  cloner: !StreamingMapReduceAction
+    configuration:
+      input.schema.literal: ${wf:actionData('generate-schema')['eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person']}
+      mapred.input.dir: ${workingDir}/producer/person
+      mapred.input.format.class: com.cloudera.science.avro.streaming.AvroAsJSONInputFormat
+      mapred.output.dir: ${workingDir}/cloner/person
+      mapred.output.format.class: com.cloudera.science.avro.streaming.AvroAsJSONOutputFormat
+      output.schema.literal: ${wf:actionData('generate-schema')['eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person']}
+    error_node: fail
+    mapper: scripts/cloner.py --copies 3
+    ok_node: consumer
+    reducer: scripts/cloner.py --copies 2
+  consumer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.examples.java.PersonTestingConsumer
+    - -Iperson=${workingDir}/cloner/person
+    - -Pexpected_copies=6
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: end
+  end: !End {}
+  fail: !Kill {}
+  generate-schema: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person
+    captures_output: true
+    configuration: {}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator
+    ok_node: producer
+  producer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.examples.java.SampleDataProducer
+    - -Operson=${workingDir}/producer/person
+    - -Odocument=${workingDir}/producer/document
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: cloner
+  start: !Start
+    next: generate-schema
+parameters: {}
+

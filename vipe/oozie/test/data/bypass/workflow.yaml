@@ -1,0 +1,39 @@
+!OozieGraph
+nodes:
+  decision-referenceextraction_dataset: !Decision
+    cases:
+    - !DecisionCase
+      condition: ${active_referenceextraction_dataset eq "true"}
+      target: referenceextraction_dataset
+    default_node: skip-referenceextraction_dataset
+  end: !End {}
+  fail: !Kill {}
+  referenceextraction_dataset: !SubworkflowAction
+    app_path: ${wf:appPath()}/referenceextraction_dataset
+    configuration:
+      input_dataset: ${input_dataset}
+      input_document_text: ${input_document_text}
+      output_document_to_dataset: ${output_document_to_dataset}
+      workingDir: ${workingDir}/referenceextraction_dataset/working_dir
+    error_node: fail
+    ok_node: end
+    propagate_configuration: true
+  skip-referenceextraction_dataset: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.java.jsonworkflownodes.Producer
+    - -C{referenceextraction_dataset, eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet,
+      eu/dnetlib/iis/workflows/top/data/empty.json}
+    - -Oreferenceextraction_dataset=${output_document_to_dataset}
+    captures_output: false
+    configuration: {}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: end
+  start: !Start
+    next: decision-referenceextraction_dataset
+parameters:
+  active_referenceextraction_project: 'true'
+  input_dataset: null
+  input_document_text: null
+  output_document_to_dataset: null
+

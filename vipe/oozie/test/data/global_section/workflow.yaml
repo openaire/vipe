@@ -1,0 +1,14 @@
+!OozieGraph
+nodes:
+  end: !End {}
+  fail: !Kill {}
+  init-workingDir: !FSAction
+    configuration: {}
+    error_node: fail
+    ok_node: end
+  start: !Start
+    next: init-workingDir
+parameters:
+  execution_environment: preprocessing
+  workingDir: /user/${user.name}/iis/working_dirs/${execution_environment}
+

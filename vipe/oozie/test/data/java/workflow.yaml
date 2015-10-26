@@ -17,8 +17,7 @@ nodes:
   producer: !JavaAction
     args:
     - eu.dnetlib.iis.core.java.jsonworkflownodes.Producer
-    - "-C{person,\n\t\t\t\teu.dnetlib.iis.core.examples.schemas.documentandauthor.Person,\n\
-      \t\t\t\teu/dnetlib/iis/core/examples/data/person.json}"
+    - -C{person, eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person, eu/dnetlib/iis/core/examples/data/person.json}
     - -Operson=${workingDir}/producer/person
     captures_output: false
     configuration:
@@ -29,3 +28,4 @@ nodes:
   start: !Start
     next: producer
 parameters: {}
+

@@ -1,0 +1,16 @@
+!OozieGraph
+nodes:
+  copy-version: !DistCPAction
+    configuration: {}
+    error_node: fail
+    from_: ${wf:appPath()}/version.properties
+    ok_node: end
+    to: ${nameNode}${workingDir}
+  end: !End {}
+  fail: !Kill {}
+  start: !Start
+    next: copy-version
+parameters:
+  execution_environment: preprocessing
+  workingDir: /user/${user.name}/iis/working_dirs/${execution_environment}
+

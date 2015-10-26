@@ -1,0 +1,66 @@
+!OozieGraph
+nodes:
+  cloner: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.examples.java.PersonCloner
+    - -Iperson=${workingDir}/mr_cloner/person
+    - -Operson=${workingDir}/cloner/person
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: end
+  data_producer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.examples.java.SampleDataProducer
+    - -Operson=${workingDir}/data_producer/person
+    - -Odocument=${workingDir}/data_producer/document
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: mr_cloner
+  end: !End {}
+  fail: !Kill {}
+  generate-schema: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person
+    - org.apache.avro.Schema.Type.STRING
+    captures_output: true
+    configuration: {}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator
+    ok_node: data_producer
+  mr_cloner: !JavaMapReduceAction
+    configuration:
+      avro.schema.input.key: ${wf:actionData('generate-schema')['eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person']}
+      avro.schema.output.key: ${wf:actionData('generate-schema')['eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person']}
+      avro.serialization.key.reader.schema: ${wf:actionData('generate-schema')['org.apache.avro.Schema.Type.STRING']}
+      avro.serialization.key.writer.schema: ${wf:actionData('generate-schema')['org.apache.avro.Schema.Type.STRING']}
+      avro.serialization.value.reader.schema: ${wf:actionData('generate-schema')['eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person']}
+      avro.serialization.value.writer.schema: ${wf:actionData('generate-schema')['eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person']}
+      copiesCount: '2'
+      io.serializations: org.apache.hadoop.io.serializer.WritableSerialization,org.apache.hadoop.io.serializer.avro.AvroSpecificSerialization,org.apache.hadoop.io.serializer.avro.AvroReflectSerialization,org.apache.avro.hadoop.io.AvroSerialization
+      mapred.input.dir: ${workingDir}/data_producer/person
+      mapred.mapoutput.key.class: org.apache.avro.mapred.AvroKey
+      mapred.mapoutput.value.class: org.apache.avro.mapred.AvroValue
+      mapred.mapper.new-api: 'true'
+      mapred.output.dir: ${workingDir}/mr_cloner/person
+      mapred.output.key.class: org.apache.avro.mapred.AvroKey
+      mapred.output.key.comparator.class: org.apache.avro.hadoop.io.AvroKeyComparator
+      mapred.output.value.class: org.apache.avro.mapred.AvroValue
+      mapred.output.value.groupfn.class: org.apache.avro.hadoop.io.AvroKeyComparator
+      mapred.reducer.new-api: 'true'
+      mapreduce.inputformat.class: org.apache.avro.mapreduce.AvroKeyInputFormat
+      mapreduce.map.class: eu.dnetlib.iis.core.examples.javamapreduce.PersonClonerMapper
+      mapreduce.outputformat.class: org.apache.avro.mapreduce.AvroKeyOutputFormat
+      mapreduce.reduce.class: eu.dnetlib.iis.core.examples.javamapreduce.PersonClonerReducer
+      rpc.engine.org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolPB: org.apache.hadoop.ipc.ProtobufRpcEngine
+    error_node: fail
+    ok_node: cloner
+  start: !Start
+    next: generate-schema
+parameters: {}
+

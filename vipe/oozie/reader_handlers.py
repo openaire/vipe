@@ -14,7 +14,8 @@
 
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
-from vipe.oozie.parse_utils import properties_to_dict
+from vipe.oozie.parse_utils import properties_to_dict, get_text, \
+    findall_to_text, find_to_text
 from vipe.oozie.graph import DecisionCase, Decision, End, Kill, Fork, Join, \
     Start, OtherAction, SubworkflowAction, JavaAction, StreamingMapReduceAction, \
     JavaMapReduceAction, PigAction, HiveAction, FSAction, DistCPAction
@@ -37,8 +38,8 @@ def handle_action(elem):
         return (name, SubworkflowAction(ok_node, error_node, configuration, 
                                  app_path, propagate_configuration))
     elif type_ == 'java':
-        main_class = action_elem.find('main-class').text
-        args = [e.text for e in action_elem.findall('arg')]
+        main_class = find_to_text(action_elem, 'main-class')
+        args = findall_to_text(action_elem, 'arg')
         captures_output = action_elem.find('capture-output') is not None
         return (name, JavaAction(ok_node, error_node, configuration, 
                                  main_class, args, captures_output))
@@ -46,8 +47,8 @@ def handle_action(elem):
         streaming_elem = action_elem.find('streaming')
         pipes_elem = action_elem.find('pipes')
         if streaming_elem is not None:
-            mapper = streaming_elem.find('mapper')
-            reducer = streaming_elem.find('reducer')
+            mapper = find_to_text(streaming_elem, 'mapper')
+            reducer = find_to_text(streaming_elem, 'reducer')
             return (name, StreamingMapReduceAction(ok_node, error_node, 
                             configuration, mapper, reducer))
         elif pipes_elem is not None:
@@ -59,16 +60,16 @@ def handle_action(elem):
             return (name, JavaMapReduceAction(ok_node, error_node, 
                                               configuration))
     elif type_ == 'pig':
-        script = action_elem.find('script')
-        params = [e.text for e in action_elem.findall('param')]
-        args = [e.text for e in action_elem.findall('argument')]
+        script = find_to_text(action_elem, 'script')
+        params = findall_to_text(action_elem, 'param')
+        args = findall_to_text(action_elem, 'argument')
         return (name, PigAction(ok_node, error_node, configuration, 
                                  script, params, args))
     elif type_ == 'hive':
-        script = action_elem.find('script')
-        params = [e.text for e in action_elem.findall('param')]
+        script = find_to_text(action_elem, 'script')
+        params = findall_to_text(action_elem, 'param')
         return (name, HiveAction(ok_node, error_node, configuration, 
-                             script, params, args))
+                             script, params))
     elif type_ == 'fs':
         return (name, FSAction(ok_node, error_node))
     elif type_ == 'distcp':
@@ -116,7 +117,7 @@ def handle_decision(elem):
             to = case.get('to')
             tag = case.tag
             if tag == 'case':
-                text = case.text
+                text = get_text(case)
                 cases.append(DecisionCase(text, to))
             elif tag == 'default':
                 assert default_node is None

@@ -1,0 +1,32 @@
+!OozieGraph
+nodes:
+  cloner1: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.examples.java.PersonCloner
+    - -Iperson=${input_person}
+    - -Operson=${workingDir}/cloner1/person
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: my_subsubworkflow
+  end: !End {}
+  fail: !Kill {}
+  my_subsubworkflow: !SubworkflowAction
+    app_path: ${wf:appPath()}/my_subsubworkflow
+    configuration:
+      input_person: ${workingDir}/cloner1/person
+      jobTracker: ${jobTracker}
+      nameNode: ${nameNode}
+      output_person: ${output_person}
+      param_copies_count: ${param_copies_count}
+      queueName: ${queueName}
+      workingDir: ${workingDir}/my_subsubworkflow/working_dir
+    error_node: fail
+    ok_node: end
+    propagate_configuration: false
+  start: !Start
+    next: cloner1
+parameters: {}
+

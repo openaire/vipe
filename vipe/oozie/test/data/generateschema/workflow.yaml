@@ -1,0 +1,19 @@
+!OozieGraph
+nodes:
+  end: !End {}
+  fail: !Kill {}
+  generate-schema: !JavaAction
+    args:
+    - ${inputport_classname}
+    - eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata
+    - eu.dnetlib.iis.metadataextraction.schemas.DocumentText
+    - eu.dnetlib.iis.audit.schemas.Fault
+    captures_output: true
+    configuration: {}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator
+    ok_node: end
+  start: !Start
+    next: generate-schema
+parameters: {}
+

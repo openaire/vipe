@@ -1,0 +1,59 @@
+!OozieGraph
+nodes:
+  consumer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer
+    - -C{person_age, eu.dnetlib.iis.core.examples.schemas.documentandauthor.PersonAge,
+      eu/dnetlib/iis/core/examples/data/person_age.json}
+    - -C{document_with_authors, eu.dnetlib.iis.core.examples.schemas.documentandauthor.DocumentWithAuthors,
+      eu/dnetlib/iis/core/examples/data/document_with_authors.json}
+    - -C{person_with_documents, eu.dnetlib.iis.core.examples.schemas.documentandauthor.personwithdocuments.PersonWithDocuments,
+      eu/dnetlib/iis/core/examples/data/person_with_documents.json}
+    - -Iperson_age=${workingDir}/joiner/person_age
+    - -Idocument_with_authors=${workingDir}/joiner/document_with_authors
+    - -Iperson_with_documents=${workingDir}/joiner/person_with_documents
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: end
+  end: !End {}
+  fail: !Kill {}
+  joiner: !HiveAction
+    configuration:
+      mapred.job.queue.name: ${queueName}
+      oozie.hive.defaults: hive-site.xml
+    error_node: fail
+    ok_node: consumer
+    params:
+    - workingDir=${workingDir}/joiner/working_dir
+    - input_person=${workingDir}/producer/person
+    - input_document=${workingDir}/producer/document
+    - output_document_with_authors=${workingDir}/joiner/document_with_authors
+    - output_person_with_documents=${workingDir}/joiner/person_with_documents
+    - output_person_age=${workingDir}/joiner/person_age
+    - schema_input_document=${wf:appPath()}/lib/scripts/document.avsc
+    - schema_input_person=${wf:appPath()}/lib/scripts/person.avsc
+    - schema_output_document_with_authors=${wf:appPath()}/lib/scripts/document_with_authors.avsc
+    - schema_output_person_with_documents=${wf:appPath()}/lib/scripts/person_with_documents.avsc
+    - schema_output_person_age=${wf:appPath()}/lib/scripts/person_age.avsc
+    script: lib/scripts/joiner.q
+  producer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.java.jsonworkflownodes.Producer
+    - -C{person, eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person, eu/dnetlib/iis/core/examples/data/person.json}
+    - -C{document, eu.dnetlib.iis.core.examples.schemas.documentandauthor.Document,
+      eu/dnetlib/iis/core/examples/data/document.json}
+    - -Operson=${workingDir}/producer/person
+    - -Odocument=${workingDir}/producer/document
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: joiner
+  start: !Start
+    next: producer
+parameters: {}
+

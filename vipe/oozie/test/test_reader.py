@@ -19,9 +19,54 @@ from pkg_resources import resource_stream
 import vipe.oozie.reader
 from vipe.oozie.graph_serialization import from_yaml
 
-def test_simple_java_workflow():
-    check('data/simple_java_workflow/workflow.xml', 
-          'data/simple_java_workflow/expected.yaml')
+def test_bypass():
+    check_from_data_dir('bypass')
+
+def test_conditional():
+    check_from_data_dir('conditional')
+
+def test_distcp():
+    check_from_data_dir('distcp')
+
+def test_fork():
+    check_from_data_dir('fork')
+
+def test_fs():
+    check_from_data_dir('fs')
+
+def test_generatesschema():
+    check_from_data_dir('generateschema')
+
+def test_global_section():
+    check_from_data_dir('global_section')
+
+def test_hadoopstreaming():
+    check_from_data_dir('hadoopstreaming')
+
+def test_hive():
+    check_from_data_dir('hive')
+
+def test_i_o_paths_parameters():
+    check_from_data_dir('i_o_paths_parameters')
+
+def test_java():
+    check_from_data_dir('java')
+
+def test_javamapreduce():
+    check_from_data_dir('javamapreduce')
+
+def test_javamapreduce_multipleoutput():
+    check_from_data_dir('javamapreduce_multipleoutput')
+
+def test_pig():
+    check_from_data_dir('pig')
+
+def test_subworkflow():
+    check_from_data_dir('subworkflow')
+
+def check_from_data_dir(dir_name):
+    check('data/{}/workflow.xml'.format(dir_name), 
+          'data/{}/workflow.yaml'.format(dir_name))
 
 def check(oozie_workflow_file_path, expected_yaml_file_path):
     oozie_workflow = __read_string(oozie_workflow_file_path)
