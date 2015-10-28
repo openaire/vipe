@@ -18,9 +18,9 @@ import xml.etree.ElementTree as ET
 import sys
 import re
 from vipe.oozie.graph import OozieGraph
-from vipe.oozie.reader_handlers import handle_fork, handle_decision, \
+from vipe.oozie.reader.handlers import handle_fork, handle_decision, \
     handle_action, handle_join, handle_start, handle_end, handle_kill
-from vipe.oozie.parse_utils import properties_to_dict
+from vipe.oozie.reader.utils import properties_to_dict
 
 def read(xml_string):
     """ Read Oozie XML workflow definition

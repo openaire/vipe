@@ -1,0 +1,32 @@
+!Pipeline
+nodes:
+  cloner1: !Node
+    input_ports:
+      person: ${workingDir}/data_producer/person
+    output_ports:
+      person: ${workingDir}/cloner1/person
+    type: JavaAction
+  cloner2: !Node
+    input_ports:
+      person: ${workingDir}/my_subworkflow/person
+    output_ports:
+      person: ${workingDir}/cloner2/person
+    type: JavaAction
+  consumer: !Node
+    input_ports:
+      data: ${workingDir}/cloner2/person
+    output_ports: {}
+    type: JavaAction
+  data_producer: !Node
+    input_ports: {}
+    output_ports:
+      document: ${workingDir}/data_producer/document
+      person: ${workingDir}/data_producer/person
+    type: JavaAction
+  my_subworkflow: !Node
+    input_ports:
+      person: ${workingDir}/cloner1/person
+    output_ports:
+      person: ${workingDir}/my_subworkflow/person
+    type: SubworkflowAction
+

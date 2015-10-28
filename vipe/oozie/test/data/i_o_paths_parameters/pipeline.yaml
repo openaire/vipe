@@ -1,0 +1,19 @@
+!Pipeline
+nodes:
+  consumer: !Node
+    input_ports:
+      metadata: ${output_root}/${output_name_meta}
+    output_ports: {}
+    type: JavaAction
+  generate-schema: !Node
+    input_ports: {}
+    output_ports: {}
+    type: JavaAction
+  metadata_extractor: !Node
+    input_ports:
+      input: ${input}
+    output_ports:
+      ${output_name_fault}: ${output_root}/${output_name_fault}
+      ${output_name_meta}: ${output_root}/${output_name_meta}
+    type: JavaMapReduceAction
+

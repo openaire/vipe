@@ -1,0 +1,15 @@
+!Pipeline
+nodes:
+  cloner1: !Node
+    input_ports:
+      person: ${input_person}
+    output_ports:
+      person: ${workingDir}/cloner1/person
+    type: JavaAction
+  cloner2: !Node
+    input_ports:
+      person: ${workingDir}/cloner1/person
+    output_ports:
+      person: ${output_person}
+    type: JavaAction
+

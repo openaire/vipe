@@ -20,8 +20,8 @@ nodes:
     error_node: fail
     ok_node: consumer
     params:
-    - person=${workingDir}/producer/person.csv
-    - person_id=${workingDir}/pig_node/person_id
+    - input_person=${workingDir}/producer/person.csv
+    - output_person_id=${workingDir}/pig_node/person_id
     script: script.pig
   producer: !JavaAction
     args:

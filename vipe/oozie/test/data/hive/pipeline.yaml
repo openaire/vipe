@@ -1,0 +1,25 @@
+!Pipeline
+nodes:
+  consumer: !Node
+    input_ports:
+      document_with_authors: ${workingDir}/joiner/document_with_authors
+      person_age: ${workingDir}/joiner/person_age
+      person_with_documents: ${workingDir}/joiner/person_with_documents
+    output_ports: {}
+    type: JavaAction
+  joiner: !Node
+    input_ports:
+      document: ${workingDir}/producer/document
+      person: ${workingDir}/producer/person
+    output_ports:
+      document_with_authors: ${workingDir}/joiner/document_with_authors
+      person_age: ${workingDir}/joiner/person_age
+      person_with_documents: ${workingDir}/joiner/person_with_documents
+    type: HiveAction
+  producer: !Node
+    input_ports: {}
+    output_ports:
+      document: ${workingDir}/producer/document
+      person: ${workingDir}/producer/person
+    type: JavaAction
+

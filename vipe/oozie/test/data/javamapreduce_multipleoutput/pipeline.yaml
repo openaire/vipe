@@ -1,0 +1,31 @@
+!Pipeline
+nodes:
+  cloner: !Node
+    input_ports:
+      person: ${workingDir}/mr_cloner/person
+    output_ports:
+      person: ${workingDir}/cloner/person
+    type: JavaAction
+  consumer: !Node
+    input_ports:
+      data: ${workingDir}/cloner/person
+    output_ports: {}
+    type: JavaAction
+  data_producer: !Node
+    input_ports: {}
+    output_ports:
+      document: ${workingDir}/data_producer/document
+      person: ${workingDir}/data_producer/person
+    type: JavaAction
+  generate-schema: !Node
+    input_ports: {}
+    output_ports: {}
+    type: JavaAction
+  mr_cloner: !Node
+    input_ports:
+      input: ${workingDir}/data_producer/person
+    output_ports:
+      age: ${workingDir}/mr_cloner/age
+      person: ${workingDir}/mr_cloner/person
+    type: JavaMapReduceAction
+

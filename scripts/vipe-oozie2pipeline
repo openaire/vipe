@@ -19,20 +19,23 @@ __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 import sys
 import argparse
 from vipe.oozie.reader.reader import read
+from vipe.oozie.converter.converter import convert
+from vipe.oozie.converter.iis import IISPipelineConverter
 
 def parse():
     """Parse CLI arguments"""
     parser = argparse.ArgumentParser(
-        description='Convert the most important parts of Oozie XML file '
-            'to a YAML file. It is assumed that the Oozie XML file follows '
-            'conventions from the OpenAIRE IIS project. ' 
-            'The XML file has to be provided on stdin '
-            'and the output will be produced on stdout.')
+        description='Convert Oozie XML file to a pipeline representation. '
+            'In this representation, workflow nodes have ports and these ' 
+            'are connected to show the producer-consumer dependencies. ' 
+            'An Oozie XML file has to be provided on stdin '
+            'and the output in YAML format is produced on stdout.')
     args = parser.parse_args()
     return args
 
 args = parse()
 xml_string = sys.stdin.read()
-graph = read(xml_string)
-graph_dump = graph.to_yaml_dump()
-print(graph_dump)
+oozie_graph = read(xml_string)
+pipeline = convert(oozie_graph, IISPipelineConverter())
+pipeline_dump = pipeline.to_yaml_dump()
+print(pipeline_dump)

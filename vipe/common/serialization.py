@@ -16,8 +16,8 @@ __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
 import yaml
 
-def to_yaml(graph):
-    return yaml.dump(graph, default_flow_style=False)
+def to_yaml(object_):
+    return yaml.dump(object_, default_flow_style=False)
 
 def from_yaml(string):
     return yaml.load(string)

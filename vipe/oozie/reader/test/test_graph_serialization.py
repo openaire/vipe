@@ -16,16 +16,16 @@ __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
 from pkg_resources import resource_stream
 
-from vipe.oozie.graph_serialization import from_yaml, to_yaml
+from vipe.oozie.graph import OozieGraph
 
 def test_simple_java_workflow():
-    check('data/java/workflow.yaml')
+    check('../../test/data/java/workflow.yaml')
 
 def check(yaml_file_path):
-    graph1 = from_yaml(__read_string(yaml_file_path))
-    yaml_str1 = to_yaml(graph1)
-    graph2 = from_yaml(yaml_str1)
-    yaml_str2 = to_yaml(graph2)
+    graph1 = OozieGraph.from_yaml_dump(__read_string(yaml_file_path))
+    yaml_str1 = graph1.to_yaml_dump()
+    graph2 = OozieGraph.from_yaml_dump(yaml_str1)
+    yaml_str2 = graph2.to_yaml_dump()
     assert yaml_str1 == yaml_str2
     assert graph1 == graph2
 

@@ -14,7 +14,7 @@
 
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
-from vipe.oozie.parse_utils import properties_to_dict, get_text, \
+from vipe.oozie.reader.utils import properties_to_dict, get_text, \
     findall_to_text, find_to_text
 from vipe.oozie.graph import DecisionCase, Decision, End, Kill, Fork, Join, \
     Start, OtherAction, SubworkflowAction, JavaAction, StreamingMapReduceAction, \

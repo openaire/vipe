@@ -37,6 +37,9 @@ html-readme:
 run-oozie2yaml-example:
 	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); ./scripts/vipe-oozie2yaml < examples/simple_workflow/workflow.xml
 
+run-oozie2pipeline-example:
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); ./scripts/vipe-oozie2pipeline < vipe/oozie/reader/test/data/subworkflow/workflow.xml
+
 clean:
 	rm -rf build dist $(PROJECT).egg-info docs-api tmp
 

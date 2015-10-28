@@ -16,6 +16,9 @@ __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
 import yaml
 
+import vipe.common.serialization
+from vipe.common.utils import default_eq
+
 class OozieGraph(yaml.YAMLObject):
     """A structure corresponding directly to Oozie XML file"""
     yaml_tag = '!OozieGraph'
@@ -40,15 +43,27 @@ class OozieGraph(yaml.YAMLObject):
         return self.nodes['start']
     
     def __eq__(self, other):
-        return _default_eq(self, other)
-        
+        return default_eq(self, other)
+    
+    def __str__(self):
+        return self.to_yaml_dump()
 
-def _default_eq(self, other):
-    """Default implementation of equality operator"""
-    return (type(other) is type(self)) and (self.__dict__ == other.__dict__)
+    def to_yaml_dump(self):
+        """Dump the graph to YAML.
+        
+        Note that intially I named this method `to_yaml()`, but this
+        interfered with the YAML serialization process and this exception
+        was thrown: "TypeError: to_yaml() takes 1 positional argument but 2 were given"
+        """
+        return vipe.common.serialization.to_yaml(self)
+    
+    @staticmethod
+    def from_yaml_dump(yaml_string):
+        """Read the graph from YAML dump."""
+        return vipe.common.serialization.from_yaml(yaml_string)
         
 class Node(yaml.YAMLObject):
-    yaml_tag = '!Node'
+    pass
 
 class Action(Node):
     def __init__(self, ok_node, error_node, configuration):
@@ -67,7 +82,7 @@ class Action(Node):
         self.configuration = configuration
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class OtherAction(Action):
     """Action that is not recognized by the program"""
@@ -82,7 +97,7 @@ class OtherAction(Action):
         self.type = type_
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class SubworkflowAction(Action):
     yaml_tag = '!SubworkflowAction'
@@ -101,7 +116,7 @@ class SubworkflowAction(Action):
         self.propagate_configuration = propagate_configuration
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class JavaAction(Action):
     yaml_tag = '!JavaAction'
@@ -122,7 +137,7 @@ class JavaAction(Action):
         self.captures_output = captures_output
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class StreamingMapReduceAction(Action):
     yaml_tag = '!StreamingMapReduceAction'
@@ -138,7 +153,7 @@ class StreamingMapReduceAction(Action):
         self.reducer = reducer
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class JavaMapReduceAction(Action):
     yaml_tag = '!JavaMapReduceAction'
@@ -147,7 +162,7 @@ class JavaMapReduceAction(Action):
         super().__init__(ok_node, error_node, configuration)
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class PigAction(Action):
     yaml_tag = '!PigAction'
@@ -166,7 +181,7 @@ class PigAction(Action):
         self.arguments = arguments
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class HiveAction(Action):
     yaml_tag = '!HiveAction'
@@ -183,7 +198,7 @@ class HiveAction(Action):
         self.params = params
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class FSAction(Action):
     yaml_tag = '!FSAction'
@@ -192,7 +207,7 @@ class FSAction(Action):
         super().__init__(ok_node, error_node, {})
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class DistCPAction(Action):
     yaml_tag = '!DistCPAction'
@@ -203,7 +218,7 @@ class DistCPAction(Action):
         self.to = to
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class Fork(Node):
     yaml_tag = '!Fork'
@@ -216,7 +231,7 @@ class Fork(Node):
         self.nodes = nodes
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class Join(Node):
     yaml_tag = '!Join'
@@ -229,7 +244,7 @@ class Join(Node):
         self.next = next_
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class Decision(Node):
     yaml_tag = '!Decision'
@@ -244,7 +259,7 @@ class Decision(Node):
         self.default_node = default_node
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class DecisionCase(yaml.YAMLObject):
     yaml_tag = '!DecisionCase'
@@ -260,7 +275,7 @@ class DecisionCase(yaml.YAMLObject):
         self.target = target
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class Start(Node):
     yaml_tag = '!Start'
@@ -274,16 +289,16 @@ class Start(Node):
         self.next = next_
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class End(Node):
     yaml_tag = '!End'
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)
 
 class Kill(Node):
     yaml_tag = '!Kill'
 
     def __eq__(self, other):
-        return _default_eq(self, other)
+        return default_eq(self, other)

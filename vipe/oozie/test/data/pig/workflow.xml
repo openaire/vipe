@@ -41,8 +41,8 @@
 				</property>
 			</configuration>
 			<script>script.pig</script>
-			<param>person=${workingDir}/producer/person.csv</param>
-			<param>person_id=${workingDir}/pig_node/person_id</param>
+            <param>input_person=${workingDir}/producer/person.csv</param>
+            <param>output_person_id=${workingDir}/pig_node/person_id</param>
 		</pig>
 		<ok to="consumer" />
 		<error to="fail" />

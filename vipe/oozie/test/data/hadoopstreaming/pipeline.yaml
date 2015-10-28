@@ -1,0 +1,24 @@
+!Pipeline
+nodes:
+  cloner: !Node
+    input_ports:
+      input: ${workingDir}/producer/person
+    output_ports:
+      output: ${workingDir}/cloner/person
+    type: StreamingMapReduceAction
+  consumer: !Node
+    input_ports:
+      person: ${workingDir}/cloner/person
+    output_ports: {}
+    type: JavaAction
+  generate-schema: !Node
+    input_ports: {}
+    output_ports: {}
+    type: JavaAction
+  producer: !Node
+    input_ports: {}
+    output_ports:
+      document: ${workingDir}/producer/document
+      person: ${workingDir}/producer/person
+    type: JavaAction
+

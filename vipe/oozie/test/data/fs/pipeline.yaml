@@ -1,0 +1,8 @@
+!Pipeline
+nodes:
+  check-empty-dir: !Node
+    input_ports:
+      input: ${workingDir}/empty
+    output_ports: {}
+    type: JavaAction
+
