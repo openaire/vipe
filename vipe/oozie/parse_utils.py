@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # Copyright 2013-2015 University of Warsaw
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Tool for visualizing Apache Oozie pipelines"""
+__author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
-print('Hello world!')
+def properties_to_dict(elem):
+    """Take XML element containing properties and turn it into dictionary"""
+    d = {}
+    for child in elem:
+        assert child.tag == 'property'
+        name = child.find('name').text
+        value = None
+        value_elem = child.find('value')
+        if value_elem is not None:
+            value = value_elem.text
+        d[name] = value
+    return d

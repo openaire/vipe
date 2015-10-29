@@ -1,6 +1,7 @@
 PROJECT=vipe
 MY_CURR_DIR=$(shell pwd)
 MY_PYTHON_PATH=$(shell echo ${PYTHONPATH})
+PIP=pip3
 
 all: build-source-package
 
@@ -11,16 +12,16 @@ install-user: clean rst-description-file
 	./setup.py install --user
 
 install: clean rst-description-file
-	sudo ./setup.py install
+	./setup.py install
 
 uninstall-user:
-	pip uninstall $(PROJECT)
+	$(PIP) uninstall $(PROJECT)
 
 uninstall:
-	sudo pip uninstall $(PROJECT)
+	$(PIP) uninstall $(PROJECT)
 
 test:
-	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); nosetests -v
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); py.test $(PROJECT)
 
 ## Check correctness of the `.travis.yml` file
 check-travis:
@@ -32,6 +33,9 @@ check-package-metatada: rst-description-file
 html-readme:
 	mkdir -p tmp
 	pandoc -N -t html -s --no-wrap -o tmp/README.html README.md
+
+run-oozie2yaml-example:
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); ./scripts/vipe-oozie2yaml < examples/simple_workflow/workflow.xml
 
 clean:
 	rm -rf build dist $(PROJECT).egg-info docs-api tmp
@@ -65,7 +69,7 @@ rst-description-file:
 
 upload-to-testpypi-and-install: rst-description-file
 	./setup.py sdist bdist_wheel upload -r test
-	pip install --user -i https://testpypi.python.org/pypi $(PROJECT)
+	$(PIP) install --user -i https://testpypi.python.org/pypi $(PROJECT)
 
 upload-to-pypi: rst-description-file
 	./setup.py sdist bdist_egg bdist_wheel upload -r pypi

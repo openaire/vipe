@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+
+# Copyright 2013-2015 University of Warsaw
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+__author__ = "Mateusz Kobos mkobos@icm.edu.pl"
+
+import sys
+import argparse
+import vipe.oozie.reader
+import vipe.oozie.graph_serialization
+
+def parse():
+    """Parse CLI arguments"""
+    parser = argparse.ArgumentParser(
+        description='Convert the most important parts of Oozie XML file '\
+        'to a YAML file. The XML file has to be provided on stdin '\
+            'and the output will be produced on stdout.')
+    args = parser.parse_args()
+    return args
+
+args = parse()
+xml_string = sys.stdin.read()
+graph = vipe.oozie.reader.read(xml_string)
+graph_dump = vipe.oozie.graph_serialization.to_yaml(graph)
+print(graph_dump)

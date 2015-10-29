@@ -15,6 +15,7 @@
 # limitations under the License.
 
 from setuptools import setup, find_packages
+from glob import glob
 
 import vipe
 
@@ -32,10 +33,9 @@ setup(
     long_description=open('tmp/README.rst').read(),
     install_requires=open('requirements.txt').read().split(),
     ## Add ability to run tests in the code through the setup.py script
-    test_suite='nose.collector',
     keywords=['Oozie', 'workflow visualization', 'pipeline visualization'],
     classifiers=[
-        'Development Status :: 1 - Planning',
+        'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Programming Language :: Python',
@@ -43,5 +43,5 @@ setup(
         'License :: OSI Approved :: Apache Software License',
         'Topic :: Scientific/Engineering :: Visualization',
     ],
-    scripts=['scripts/vipe.py']
+    scripts=[p for p in glob('scripts/vipe*')]
 )
