@@ -1,11 +1,9 @@
 <workflow-app xmlns="uri:oozie:workflow:0.3" name="test-core_examples_java_cloner">
-<!-- 
-This workflow demonstrates how to apply a simple Java workflow node on data
-consisting of person records. The Java workflow node does not do anything
-intelligent - it just creates a given number of copies of each input record
-
-Note that documentation placed in comments in this file uses the 
-"markdown" syntax (along with division into sections). -->
+	<!-- This workflow demonstrates how to apply a simple Java workflow node 
+		on data consisting of person records. The Java workflow node does not do 
+		anything intelligent - it just creates a given number of copies of each input 
+		record Note that documentation placed in comments in this file uses the "markdown" 
+		syntax (along with division into sections). -->
 	<start to="producer" />
 	<action name="producer">
 		<java>
@@ -29,7 +27,8 @@ Note that documentation placed in comments in this file uses the
 			<!-- Specification of the output ports -->
 			<arg>-C{person,
 				eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person,
-				eu/dnetlib/iis/core/examples/data/person.json}</arg>
+				eu/dnetlib/iis/core/examples/data/person.json}
+			</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Operson=${workingDir}/producer/person</arg>
 		</java>
@@ -60,12 +59,35 @@ Note that documentation placed in comments in this file uses the
 			<arg>-Operson=${workingDir}/cloner/person</arg>
 			<arg>-Pcopies=3</arg>
 		</java>
+		<ok to="consumer" />
+		<error to="fail" />
+	</action>
+	
+	<action name="consumer">
+		<java>
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<configuration>
+				<property>
+					<name>mapred.job.queue.name</name>
+					<value>${queueName}</value>
+				</property>
+			</configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<arg>-C{metadata,
+				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
+				eu/dnetlib/iis/workflows/metadataextraction/sampledataproducer/data/metadata.json}</arg>
+			<arg>-Imetadata=${workingDir}/out</arg>
+		</java>
 		<ok to="end" />
 		<error to="fail" />
 	</action>
+	
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
-			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+			[${wf:errorMessage(wf:lastErrorNode())}]
+		</message>
 	</kill>
 	<end name="end" />
 </workflow-app>

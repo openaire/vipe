@@ -1,5 +1,17 @@
 !OozieGraph
 nodes:
+  consumer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer
+    - -C{metadata, eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
+      eu/dnetlib/iis/workflows/metadataextraction/sampledataproducer/data/metadata.json}
+    - -Imetadata=${workingDir}/out
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: end
   end: !End {}
   fail: !Kill {}
   pig_node: !PigAction
@@ -8,7 +20,7 @@ nodes:
       mapred.compress.map.output: 'true'
       mapred.job.queue.name: ${queueName}
     error_node: fail
-    ok_node: end
+    ok_node: consumer
     params:
     - person=${workingDir}/producer/person.csv
     - person_id=${workingDir}/pig_node/person_id

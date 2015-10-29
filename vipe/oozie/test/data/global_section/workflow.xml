@@ -4,42 +4,63 @@
 		<property>
 			<name>execution_environment</name>
 			<value>preprocessing</value>
-			<description>execution environment used for workingDir creation</description>
+			<description>execution environment used for workingDir creation
+			</description>
 		</property>
 		<property>
 			<name>workingDir</name>
-			<value>/user/${user.name}/iis/working_dirs/${execution_environment}</value>
+			<value>/user/${user.name}/iis/working_dirs/${execution_environment}
+			</value>
 			<description>working directory</description>
 		</property>
 	</parameters>
 
 	<global>
-        <job-tracker>${jobTracker}</job-tracker>
-        <name-node>${nameNode}</name-node>
-        <configuration>
-            <property>
-                <name>mapred.job.queue.name</name>
-                <value>${queueName}</value>
-            </property>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+			<property>
+				<name>mapred.job.queue.name</name>
+				<value>${queueName}</value>
+			</property>
 		</configuration>
 	</global>
 
-	<start to="init-workingDir"/>
+	<start to="init-workingDir" />
 
 	<action name="init-workingDir">
-         <fs>
-            <delete path="${nameNode}${workingDir}" />
+		<fs>
+			<delete path="${nameNode}${workingDir}" />
 			<mkdir path="${nameNode}${workingDir}" />
-        </fs>
-        <ok to="end"/>
-        <error to="fail"/>
-    </action>
-	
+		</fs>
+		<ok to="transformer" />
+		<error to="fail" />
+	</action>
+
+	<action name="transformer">
+		<pig>
+			<prepare>
+				<delete path="${nameNode}${output}" />
+			</prepare>
+			<!-- Path to PIG script the workflow executes. -->
+			<script>lib/scripts/transformer/transformer.pig</script>
+
+			<param>input=${input}</param>
+			<param>schema_input=${wf:actionData('generate-schema')['eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata']}
+			</param>
+
+			<param>output=${output}</param>
+			<param>schema_output=${wf:actionData('generate-schema')['eu.dnetlib.iis.citationmatching.direct.schemas.Citation']}
+			</param>
+		</pig>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
-			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+			[${wf:errorMessage(wf:lastErrorNode())}]
+		</message>
 	</kill>
 	<end name="end" />
 </workflow-app>
-
-

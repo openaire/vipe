@@ -4,7 +4,8 @@
 		<property>
 			<name>execution_environment</name>
 			<value>preprocessing</value>
-			<description>execution environment used for workingDir creation</description>
+			<description>execution environment used for workingDir creation
+			</description>
 		</property>
 		<property>
 			<name>workingDir</name>
@@ -14,32 +15,53 @@
 	</parameters>
 
 	<global>
-        <job-tracker>${jobTracker}</job-tracker>
-        <name-node>${nameNode}</name-node>
-        <configuration>
-            <property>
-                <name>mapred.job.queue.name</name>
-                <value>${queueName}</value>
-            </property>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+			<property>
+				<name>mapred.job.queue.name</name>
+				<value>${queueName}</value>
+			</property>
 		</configuration>
 	</global>
 
-	<start to="init-workingDir"/>
+	<start to="init-workingDir" />
 
 	<action name="init-workingDir">
-         <fs>
-            <delete path="${nameNode}${workingDir}" />
+		<fs>
+			<delete path="${nameNode}${workingDir}" />
 			<mkdir path="${nameNode}${workingDir}" />
-        </fs>
-        <ok to="end"/>
-        <error to="fail"/>
-    </action>
-	
+		</fs>
+		<ok to="consumer" />
+		<error to="fail" />
+	</action>
+
+	<action name="consumer">
+		<java>
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<configuration>
+				<property>
+					<name>mapred.job.queue.name</name>
+					<value>${queueName}</value>
+				</property>
+			</configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<arg>-C{metadata,
+				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
+				eu/dnetlib/iis/workflows/metadataextraction/sampledataproducer/data/metadata.json}
+			</arg>
+			<arg>-Imetadata=${workingDir}/out</arg>
+		</java>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
-			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+			[${wf:errorMessage(wf:lastErrorNode())}]
+		</message>
 	</kill>
 	<end name="end" />
 </workflow-app>
-
-

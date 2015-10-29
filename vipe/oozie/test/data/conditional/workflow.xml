@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="citationmatching_chain">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="conditional">
 
 	<parameters>
 		<property>
-			<name>remove_sideproducts</name>
-			<value>true</value>
+			<name>entity_to_be_removed</name>
+			<description>one of: person, project, result</description>
 		</property>
 	</parameters>
 
@@ -19,15 +19,50 @@
 
 	<decision name="make_decision">
 		<switch>
-			<case to="remove_sideproducts">${remove_sideproducts eq "true"}</case>
+			<case to="remove_person">${entity_to_be_removed eq "person"}</case>
+			<case to="remove_project">${entity_to_be_removed eq "project"}</case>
+			<case to="remove_result">${entity_to_be_removed eq "result"}</case>
 			<default to="end" />
 		</switch>
 	</decision>
 
-	<action name="remove_sideproducts">
+	<action name="remove_person">
 		<fs>
-			<delete path="${nameNode}${workingDir}/coansys" />
+			<delete path="${nameNode}${workingDir}/person" />
 		</fs>
+		<ok to="finalize" />
+		<error to="fail" />
+	</action>
+
+	<action name="remove_project">
+		<fs>
+			<delete path="${nameNode}${workingDir}/project" />
+		</fs>
+		<ok to="finalize" />
+		<error to="fail" />
+	</action>
+	
+	<action name="remove_result">
+		<fs>
+			<delete path="${nameNode}${workingDir}/result" />
+		</fs>
+		<ok to="finalize" />
+		<error to="fail" />
+	</action>
+	
+	<action name="finalize">
+		<java>
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<configuration>
+				<property>
+					<name>mapred.job.queue.name</name>
+					<value>${queueName}</value>
+				</property>
+			</configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.core.java.Finalizer</arg>
+		</java>
 		<ok to="end" />
 		<error to="fail" />
 	</action>
@@ -39,5 +74,3 @@
 	</kill>
 	<end name="end" />
 </workflow-app>
-
-

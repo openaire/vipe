@@ -5,9 +5,20 @@ nodes:
   init-workingDir: !FSAction
     configuration: {}
     error_node: fail
-    ok_node: end
+    ok_node: transformer
   start: !Start
     next: init-workingDir
+  transformer: !PigAction
+    arguments: []
+    configuration: {}
+    error_node: fail
+    ok_node: end
+    params:
+    - input=${input}
+    - schema_input=${wf:actionData('generate-schema')['eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata']}
+    - output=${output}
+    - schema_output=${wf:actionData('generate-schema')['eu.dnetlib.iis.citationmatching.direct.schemas.Citation']}
+    script: lib/scripts/transformer/transformer.pig
 parameters:
   execution_environment: preprocessing
   workingDir: /user/${user.name}/iis/working_dirs/${execution_environment}

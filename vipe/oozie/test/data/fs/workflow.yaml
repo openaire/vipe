@@ -1,11 +1,23 @@
 !OozieGraph
 nodes:
+  consumer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer
+    - -C{metadata, eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
+      eu/dnetlib/iis/workflows/metadataextraction/sampledataproducer/data/metadata.json}
+    - -Imetadata=${workingDir}/out
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: end
   end: !End {}
   fail: !Kill {}
   init-workingDir: !FSAction
     configuration: {}
     error_node: fail
-    ok_node: end
+    ok_node: consumer
   start: !Start
     next: init-workingDir
 parameters:

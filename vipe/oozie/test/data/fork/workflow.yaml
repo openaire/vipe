@@ -1,5 +1,17 @@
 !OozieGraph
 nodes:
+  consumer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer
+    - -C{metadata, eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
+      eu/dnetlib/iis/workflows/metadataextraction/sampledataproducer/data/metadata.json}
+    - -Imetadata=${workingDir}/out
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: end
   document_producer: !JavaAction
     args:
     - eu.dnetlib.iis.core.examples.java.DocumentProducer
@@ -17,7 +29,7 @@ nodes:
     - person_producer
     - document_producer
   join: !Join
-    next: end
+    next: consumer
   person_producer: !JavaAction
     args:
     - eu.dnetlib.iis.core.examples.java.PersonProducer

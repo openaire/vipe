@@ -1,5 +1,17 @@
 !OozieGraph
 nodes:
+  consumer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer
+    - -C{metadata, eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
+      eu/dnetlib/iis/workflows/metadataextraction/sampledataproducer/data/metadata.json}
+    - -Imetadata=${workingDir}/out
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: end
   decision-referenceextraction_dataset: !Decision
     cases:
     - !DecisionCase
@@ -16,7 +28,7 @@ nodes:
       output_document_to_dataset: ${output_document_to_dataset}
       workingDir: ${workingDir}/referenceextraction_dataset/working_dir
     error_node: fail
-    ok_node: end
+    ok_node: consumer
     propagate_configuration: true
   skip-referenceextraction_dataset: !JavaAction
     args:
@@ -28,7 +40,7 @@ nodes:
     configuration: {}
     error_node: fail
     main_class: eu.dnetlib.iis.core.java.ProcessWrapper
-    ok_node: end
+    ok_node: consumer
   start: !Start
     next: decision-referenceextraction_dataset
 parameters:

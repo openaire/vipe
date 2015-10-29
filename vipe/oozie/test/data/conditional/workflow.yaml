@@ -2,18 +2,41 @@
 nodes:
   end: !End {}
   fail: !Kill {}
+  finalize: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.java.Finalizer
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: end
   make_decision: !Decision
     cases:
     - !DecisionCase
-      condition: ${remove_sideproducts eq "true"}
-      target: remove_sideproducts
+      condition: ${entity_to_be_removed eq "person"}
+      target: remove_person
+    - !DecisionCase
+      condition: ${entity_to_be_removed eq "project"}
+      target: remove_project
+    - !DecisionCase
+      condition: ${entity_to_be_removed eq "result"}
+      target: remove_result
     default_node: end
-  remove_sideproducts: !FSAction
+  remove_person: !FSAction
     configuration: {}
     error_node: fail
-    ok_node: end
+    ok_node: finalize
+  remove_project: !FSAction
+    configuration: {}
+    error_node: fail
+    ok_node: finalize
+  remove_result: !FSAction
+    configuration: {}
+    error_node: fail
+    ok_node: finalize
   start: !Start
     next: make_decision
 parameters:
-  remove_sideproducts: 'true'
+  entity_to_be_removed: null
 

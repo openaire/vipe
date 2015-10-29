@@ -1,5 +1,17 @@
 !OozieGraph
 nodes:
+  consumer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer
+    - -C{metadata, eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
+      eu/dnetlib/iis/workflows/metadataextraction/sampledataproducer/data/metadata.json}
+    - -Imetadata=${workingDir}/out
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: end
   end: !End {}
   fail: !Kill {}
   generate-schema: !JavaAction
@@ -15,8 +27,8 @@ nodes:
     ok_node: metadata_extractor
   metadata_extractor: !JavaMapReduceAction
     configuration:
-      avro.mapreduce.multipleoutputs: ${output_name_meta} ${output_name_plaintext}
-        ${output_name_fault}
+      avro.mapreduce.multipleoutputs: "${output_name_meta} ${output_name_plaintext}\n\
+        \t\t\t\t\t\t${output_name_fault}"
       avro.mapreduce.multipleoutputs.namedOutput.${output_name_fault}.format: org.apache.avro.mapreduce.AvroKeyOutputFormat
       avro.mapreduce.multipleoutputs.namedOutput.${output_name_fault}.keyschema: ${wf:actionData('generate-schema')['eu.dnetlib.iis.audit.schemas.Fault']}
       avro.mapreduce.multipleoutputs.namedOutput.${output_name_meta}.format: org.apache.avro.mapreduce.AvroKeyOutputFormat
@@ -52,7 +64,7 @@ nodes:
       output.plaintext: ${output_name_plaintext}
       rpc.engine.org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolPB: org.apache.hadoop.ipc.ProtobufRpcEngine
     error_node: fail
-    ok_node: end
+    ok_node: consumer
   start: !Start
     next: generate-schema
 parameters:
