@@ -5,7 +5,7 @@ nodes:
     - eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer
     - -C{metadata, eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
       eu/dnetlib/iis/workflows/metadataextraction/sampledataproducer/data/metadata.json}
-    - -Imetadata=${workingDir}/out
+    - -Imetadata=${output_root}/${output_name_meta}
     captures_output: false
     configuration:
       mapred.job.queue.name: ${queueName}
@@ -27,14 +27,11 @@ nodes:
     ok_node: metadata_extractor
   metadata_extractor: !JavaMapReduceAction
     configuration:
-      avro.mapreduce.multipleoutputs: "${output_name_meta} ${output_name_plaintext}\n\
-        \t\t\t\t\t\t${output_name_fault}"
+      avro.mapreduce.multipleoutputs: ${output_name_meta} ${output_name_fault}
       avro.mapreduce.multipleoutputs.namedOutput.${output_name_fault}.format: org.apache.avro.mapreduce.AvroKeyOutputFormat
       avro.mapreduce.multipleoutputs.namedOutput.${output_name_fault}.keyschema: ${wf:actionData('generate-schema')['eu.dnetlib.iis.audit.schemas.Fault']}
       avro.mapreduce.multipleoutputs.namedOutput.${output_name_meta}.format: org.apache.avro.mapreduce.AvroKeyOutputFormat
       avro.mapreduce.multipleoutputs.namedOutput.${output_name_meta}.keyschema: ${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata']}
-      avro.mapreduce.multipleoutputs.namedOutput.${output_name_plaintext}.format: org.apache.avro.mapreduce.AvroKeyOutputFormat
-      avro.mapreduce.multipleoutputs.namedOutput.${output_name_plaintext}.keyschema: ${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}
       avro.schema.input.key: ${wf:actionData('generate-schema')[wf:conf('inputport_classname')]}
       excluded.ids: ${excluded_ids}
       import.content.connection.timeout: ${content_connection_timeout}
@@ -61,7 +58,6 @@ nodes:
       mapreduce.map.class: eu.dnetlib.iis.workflows.metadataextraction.${processing_mode}
       output.fault: ${output_name_fault}
       output.meta: ${output_name_meta}
-      output.plaintext: ${output_name_plaintext}
       rpc.engine.org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolPB: org.apache.hadoop.ipc.ProtobufRpcEngine
     error_node: fail
     ok_node: consumer
@@ -79,7 +75,6 @@ parameters:
   max_file_size_mb: $UNDEFINED$
   output_name_fault: fault
   output_name_meta: meta
-  output_name_plaintext: plaintext
   output_root: null
   processing_mode: MetadataExtractorMapper
 

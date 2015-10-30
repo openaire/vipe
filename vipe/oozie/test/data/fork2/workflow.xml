@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.3" name="forking_subworkflow">
+<workflow-app xmlns="uri:oozie:workflow:0.3" name="forking_subworkflow_single_consumer">
 	<start to="fork" />
 
 	<!-- STEP 1 - FORKING -->
@@ -57,15 +57,10 @@
 	<!-- STEP 2B -->
 
 	<!-- STEP 3 - JOINER -->
-	<join name="join" to="consumer-fork" />
+	<join name="join" to="consumer" />
 	<!-- STEP 3 -->
 
-	<fork name="consumer-fork">
-		<path start="person_consumer" />
-		<path start="document_consumer" />
-	</fork>
-
-	<action name="person_consumer">
+	<action name="consumer">
 		<java>
 			<job-tracker>${jobTracker}</job-tracker>
 			<name-node>${nameNode}</name-node>
@@ -77,39 +72,20 @@
 			</configuration>
 			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
-			<arg>-C{data,
+			<arg>-C{person,
 				eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person,
 				eu/dnetlib/iis/core/examples/fork/data/person.json}
 			</arg>
-			<arg>-Idata=${output_person}</arg>
+			<arg>-C{document,
+                eu.dnetlib.iis.core.examples.schemas.documentandauthor.Document,
+                eu/dnetlib/iis/core/examples/fork/data/document.json}
+            </arg>
+			<arg>-Iperson=${output_person}</arg>
+			<arg>-Idocument=${output_document}</arg>
 		</java>
-		<ok to="consumer-join" />
+		<ok to="end" />
 		<error to="fail" />
 	</action>
-
-	<action name="document_consumer">
-		<java>
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
-			<configuration>
-				<property>
-					<name>mapred.job.queue.name</name>
-					<value>${queueName}</value>
-				</property>
-			</configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
-			<arg>-C{data,
-				eu.dnetlib.iis.core.examples.schemas.documentandauthor.Document,
-				eu/dnetlib/iis/core/examples/fork/data/document.json}
-			</arg>
-			<arg>-Idata=${output_document}</arg>
-		</java>
-		<ok to="consumer-join" />
-		<error to="fail" />
-	</action>
-
-	<join name="consumer-join" to="end" />
 
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:

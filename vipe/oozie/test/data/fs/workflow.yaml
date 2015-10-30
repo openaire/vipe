@@ -1,14 +1,11 @@
 !OozieGraph
 nodes:
-  consumer: !JavaAction
+  check-empty-dir: !JavaAction
     args:
-    - eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer
-    - -C{metadata, eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-      eu/dnetlib/iis/workflows/metadataextraction/sampledataproducer/data/metadata.json}
-    - -Imetadata=${workingDir}/out
+    - eu.dnetlib.iis.core.java.jsonworkflownodes.EmptyDirChecker
+    - -Iinput=${workingDir}/empty
     captures_output: false
-    configuration:
-      mapred.job.queue.name: ${queueName}
+    configuration: {}
     error_node: fail
     main_class: eu.dnetlib.iis.core.java.ProcessWrapper
     ok_node: end
@@ -17,7 +14,7 @@ nodes:
   init-workingDir: !FSAction
     configuration: {}
     error_node: fail
-    ok_node: consumer
+    ok_node: check-empty-dir
   start: !Start
     next: init-workingDir
 parameters:

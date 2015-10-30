@@ -1,22 +1,19 @@
 !OozieGraph
 nodes:
-  consumer-fork: !Fork
-    nodes:
-    - person_consumer
-    - document_consumer
-  consumer-join: !Join
-    next: end
-  document_consumer: !JavaAction
+  consumer: !JavaAction
     args:
     - eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer
-    - -C{data, eu.dnetlib.iis.core.examples.schemas.documentandauthor.Document, eu/dnetlib/iis/core/examples/fork/data/document.json}
-    - -Idata=${output_document}
+    - -C{person, eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person, eu/dnetlib/iis/core/examples/fork/data/person.json}
+    - -C{document, eu.dnetlib.iis.core.examples.schemas.documentandauthor.Document,
+      eu/dnetlib/iis/core/examples/fork/data/document.json}
+    - -Iperson=${output_person}
+    - -Idocument=${output_document}
     captures_output: false
     configuration:
       mapred.job.queue.name: ${queueName}
     error_node: fail
     main_class: eu.dnetlib.iis.core.java.ProcessWrapper
-    ok_node: consumer-join
+    ok_node: end
   document_producer: !JavaAction
     args:
     - eu.dnetlib.iis.core.examples.java.DocumentProducer
@@ -34,18 +31,7 @@ nodes:
     - person_producer
     - document_producer
   join: !Join
-    next: consumer-fork
-  person_consumer: !JavaAction
-    args:
-    - eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer
-    - -C{data, eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person, eu/dnetlib/iis/core/examples/fork/data/person.json}
-    - -Idata=${output_person}
-    captures_output: false
-    configuration:
-      mapred.job.queue.name: ${queueName}
-    error_node: fail
-    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
-    ok_node: consumer-join
+    next: consumer
   person_producer: !JavaAction
     args:
     - eu.dnetlib.iis.core.examples.java.PersonProducer

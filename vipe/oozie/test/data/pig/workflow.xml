@@ -39,10 +39,6 @@
 					<name>mapred.job.queue.name</name>
 					<value>${queueName}</value>
 				</property>
-				<property><!-- TODO: What is this? Delete it? -->
-					<name>mapred.compress.map.output</name>
-					<value>true</value>
-				</property>
 			</configuration>
 			<script>script.pig</script>
 			<param>person=${workingDir}/producer/person.csv</param>
@@ -53,25 +49,26 @@
 	</action>
 	
 	<action name="consumer">
-		<java>
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
-			<configuration>
-				<property>
-					<name>mapred.job.queue.name</name>
-					<value>${queueName}</value>
-				</property>
-			</configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
-			<arg>-C{metadata,
-				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-				eu/dnetlib/iis/workflows/metadataextraction/sampledataproducer/data/metadata.json}</arg>
-			<arg>-Imetadata=${workingDir}/out</arg>
-		</java>
-		<ok to="end" />
-		<error to="fail" />
-	</action>
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{data,
+                eu.dnetlib.iis.statistics.schemas.PersonId,
+                eu/dnetlib/iis/core/examples/pig/data/person_id.json}
+            </arg>
+            <arg>-Idata=${workingDir}/pig_node/person_id</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
 	
 	<kill name="fail">
 		<message>Unfortunately, the workflow failed -- error message:

@@ -225,9 +225,32 @@
 			<arg>-Iperson=${workingDir}/mr_cloner/person</arg>
 			<arg>-Operson=${workingDir}/cloner/person</arg>
 		</java>
+		<ok to="consumer" />
+		<error to="fail" />
+	</action>
+	
+	<action name="consumer">
+		<java>
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<configuration>
+				<property>
+					<name>mapred.job.queue.name</name>
+					<value>${queueName}</value>
+				</property>
+			</configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<arg>-C{data,
+				eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person,
+				eu/dnetlib/iis/core/examples/javamapreduce/data/person.json}
+			</arg>
+			<arg>-Idata=${workingDir}/cloner/person</arg>
+		</java>
 		<ok to="end" />
 		<error to="fail" />
 	</action>
+	
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]

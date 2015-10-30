@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_preprocessing_main">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="fs">
 	<parameters>
 		<!-- working directory related -->
 		<property>
@@ -30,33 +30,21 @@
 	<action name="init-workingDir">
 		<fs>
 			<delete path="${nameNode}${workingDir}" />
-			<mkdir path="${nameNode}${workingDir}" />
+			<mkdir path="${nameNode}${workingDir}/empty" />
 		</fs>
-		<ok to="consumer" />
+		<ok to="check-empty-dir" />
 		<error to="fail" />
 	</action>
 
-	<action name="consumer">
-		<java>
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
-			<configuration>
-				<property>
-					<name>mapred.job.queue.name</name>
-					<value>${queueName}</value>
-				</property>
-			</configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
-			<arg>-C{metadata,
-				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-				eu/dnetlib/iis/workflows/metadataextraction/sampledataproducer/data/metadata.json}
-			</arg>
-			<arg>-Imetadata=${workingDir}/out</arg>
-		</java>
-		<ok to="end" />
-		<error to="fail" />
-	</action>
+	<action name="check-empty-dir">
+        <java>
+            <main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.core.java.jsonworkflownodes.EmptyDirChecker</arg>
+            <arg>-Iinput=${workingDir}/empty</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
 
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:

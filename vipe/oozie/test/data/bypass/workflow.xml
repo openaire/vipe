@@ -95,10 +95,10 @@
 			</configuration>
 			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
-			<arg>-C{metadata,
-				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-				eu/dnetlib/iis/workflows/metadataextraction/sampledataproducer/data/metadata.json}</arg>
-			<arg>-Imetadata=${workingDir}/out</arg>
+			<arg>-C{data,
+				eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet,
+				eu/dnetlib/iis/workflows/referenceextraction/dataset/sampledataproducer/data/output.json}</arg>
+			<arg>-Idata=${output_document_to_dataset}</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />

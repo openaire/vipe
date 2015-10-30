@@ -35,11 +35,11 @@
 			<arg>${wf:appPath()}/version.properties</arg>
 			<arg>${nameNode}${workingDir}</arg>
 		</distcp>
-		<ok to="consumer" />
+		<ok to="finalize" />
 		<error to="fail" />
 	</action>
 
-	<action name="consumer">
+	<action name="finalize">
 		<java>
 			<job-tracker>${jobTracker}</job-tracker>
 			<name-node>${nameNode}</name-node>
@@ -50,11 +50,7 @@
 				</property>
 			</configuration>
 			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
-			<arg>-C{metadata,
-				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-				eu/dnetlib/iis/workflows/metadataextraction/sampledataproducer/data/metadata.json}</arg>
-			<arg>-Imetadata=${workingDir}/out</arg>
+			<arg>eu.dnetlib.iis.core.java.Finalizer</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />

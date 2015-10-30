@@ -15,9 +15,8 @@ nodes:
   consumer: !JavaAction
     args:
     - eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer
-    - -C{metadata, eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-      eu/dnetlib/iis/workflows/metadataextraction/sampledataproducer/data/metadata.json}
-    - -Imetadata=${workingDir}/out
+    - -C{data, eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person, eu/dnetlib/iis/core/examples/java/data/person.json}
+    - -Idata=${workingDir}/cloner/person
     captures_output: false
     configuration:
       mapred.job.queue.name: ${queueName}
