@@ -37,7 +37,8 @@ whitespace_pattern = re.compile(r'\s+')
 #         return 'n'+str(index)
     
 class DotProcessor:
-    """Takes GraphViz's graph in dot format and generates other stuff."""
+    """Takes GraphViz's graph in dot format and generates some derivative data.
+    """
     
     def __init__(self, dot_graph):
         """
@@ -56,18 +57,16 @@ class DotProcessor:
         raise NotImplementedError
     
     def save_image(self, output_path):
-        """Save the image to a file available at given path
+        """Save the image to a file at given path
         
         Args:
-            output_path (string): path to output png file with the graph
+            output_path (string): path to output png file
         """
         raise NotImplementedError
         
         
 class DotBuilder:
     """Tool for creating description of the graph using GraphViz's dot format.
-    
-    It separates business knowledge from knowledge about the format.
     """
     
     def __init__(self):

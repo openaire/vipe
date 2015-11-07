@@ -33,7 +33,7 @@ def to_html(pipeline, output_dir):
     
     data_register = PipelineDataRegister(pipeline)
     
-    for data_id in data_register.get_data_id():
+    for data_id in data_register.get_data_ids():
         producers = data_register.get_producers(data_id)
         if len(producers) == 0:
             raise NotImplementedError

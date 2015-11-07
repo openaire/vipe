@@ -38,9 +38,9 @@ class PipelineDataRegister:
                 data_ids.add(data_id)
             if data_id not in dict_:
                 dict_[data_id] = []
-            self.__dict_[data_id].append(NodeInfo(node_name, port))
+            self.__dict_[data_id].append(DataAddress(node_name, port))
     
-    def get_data_id(self):
+    def get_data_ids(self):
         """
         Returns:
             Set[string]: data IDs
@@ -51,7 +51,7 @@ class PipelineDataRegister:
         """Get information about producers of given data
                 
         Returns:
-            List[NodeInfo]
+            List[DataAddress]
         """ 
         return self.__producers[data_id]
     
@@ -59,12 +59,12 @@ class PipelineDataRegister:
         """Get information about consumers of given data
                 
         Returns:
-            List[NodeInfo]
+            List[DataAddress]
         """ 
         return self.__consumers[data_id]
             
             
-class NodeInfo:
+class DataAddress:
     def __init__(self, name, port):
         """
         Args:
