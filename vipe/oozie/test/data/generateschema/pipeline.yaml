@@ -1,6 +1,7 @@
 !Pipeline
 nodes:
   generate-schema: !Node
+    importance: lowest
     input_ports: {}
     output_ports: {}
     type: JavaAction

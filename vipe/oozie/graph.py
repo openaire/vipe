@@ -27,9 +27,9 @@ class OozieGraph(yaml.YAMLObject):
         """
         Args:
             parameters (Dict[string, string]): the key
-                is the name of parameter and the value is it's value.
-            nodes (Dict[string, Node]): a dictionary mapping name of a node 
-                to a Node object. The node with name 'start' is the one that 
+                is the node of parameter and the value is it's value.
+            nodes (Dict[string, Node]): a dictionary mapping node of a node 
+                to a Node object. The node with node 'start' is the one that 
                 the workflow starts from.
         """
         self.parameters = parameters
@@ -69,12 +69,12 @@ class Action(Node):
     def __init__(self, ok_node, error_node, configuration):
         """
         Args:
-            ok_node: name of Node object that is executed after this Action 
+            ok_node: node of Node object that is executed after this Action 
                 if no errors occurred during execution.
-            error_node: name of Node object that is executed after this Action 
+            error_node: node of Node object that is executed after this Action 
                 if an error occurred during execution.
             configuration (Dict[string, string]): the key is
-                the name of configuration property and the value is the
+                the node of configuration property and the value is the
                 value of the configuration property.
         """
         self.ok_node = ok_node
@@ -91,7 +91,7 @@ class OtherAction(Action):
     def __init__(self, ok_node, error_node, configuration, type_):
         """
         Args:
-            type_ (string): name of the XML tag corresponding to this action
+            type_ (string): node of the XML tag corresponding to this action
         """
         super().__init__(ok_node, error_node, configuration)
         self.type = type_
@@ -125,7 +125,7 @@ class JavaAction(Action):
                  args, captures_output):
         """
         Args:
-            main_class (string): name of Java class with the `main` method.
+            main_class (string): node of Java class with the `main` method.
             args (List[string]): contains command line arguments passed to 
             the `main` method.
             captures_output (bool): True if the node has option of 
@@ -239,7 +239,7 @@ class Join(Node):
     def __init__(self, next_):
         """
         Args:
-            next (string): A name of Node that should be executed after this one.
+            next (string): A node of Node that should be executed after this one.
         """
         self.next = next_
 
@@ -253,7 +253,7 @@ class Decision(Node):
         """
         Args:
             cases (List[DecisionCase]):
-            default_node (string): name of the default case node.
+            default_node (string): node of the default case node.
         """
         self.cases = cases
         self.default_node = default_node
@@ -268,7 +268,7 @@ class DecisionCase(yaml.YAMLObject):
         """
         Args:
             condition (string): switch condition.
-            target (string): A name of Node that will be executed after the 
+            target (string): A node of Node that will be executed after the 
                 condition is met.
         """
         self.condition = condition
@@ -283,7 +283,7 @@ class Start(Node):
     def __init__(self, next_):
         """
         Args:
-            next (string): A name of Node that should be executed after 
+            next (string): A node of Node that should be executed after 
                 this one.
         """
         self.next = next_

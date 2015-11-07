@@ -21,10 +21,11 @@ class PipelineConverter:
         OozieGraph to Pipeline.
     """
     
-    def convert_node(self, oozie_node):
+    def convert_node(self, name, oozie_node):
         """Convert OozieGraph's Node
         
         Args:
+            name (string): name of the node
             oozie_node (vipe.oozie.graph.Node): OozieGraph's Node
         
         Returns:
@@ -45,7 +46,7 @@ def convert(oozie_graph, pipeline_converter):
     """
     pipeline_nodes = {}
     for (name, oozie_node) in oozie_graph.nodes.items():
-        pipeline_node = pipeline_converter.convert_node(oozie_node)
+        pipeline_node = pipeline_converter.convert_node(name, oozie_node)
         if pipeline_node is not None:
             pipeline_nodes[name] = pipeline_node
     return Pipeline(pipeline_nodes)

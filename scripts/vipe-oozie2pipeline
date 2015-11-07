@@ -27,7 +27,9 @@ def parse():
     parser = argparse.ArgumentParser(
         description='Convert Oozie XML file to a pipeline representation. '
             'In this representation, workflow nodes have ports and these ' 
-            'are connected to show the producer-consumer dependencies. ' 
+            'are connected to show the producer-consumer dependencies. '
+            'It is assumed that the Oozie XML file follows '
+            'conventions from the OpenAIRE IIS project. '
             'An Oozie XML file has to be provided on stdin '
             'and the output in YAML format is produced on stdout.')
     args = parser.parse_args()

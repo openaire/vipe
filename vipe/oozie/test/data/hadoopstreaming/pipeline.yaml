@@ -1,21 +1,25 @@
 !Pipeline
 nodes:
   cloner: !Node
+    importance: normal
     input_ports:
       input: ${workingDir}/producer/person
     output_ports:
       output: ${workingDir}/cloner/person
     type: StreamingMapReduceAction
   consumer: !Node
+    importance: normal
     input_ports:
       person: ${workingDir}/cloner/person
     output_ports: {}
     type: JavaAction
   generate-schema: !Node
+    importance: lowest
     input_ports: {}
     output_ports: {}
     type: JavaAction
   producer: !Node
+    importance: normal
     input_ports: {}
     output_ports:
       document: ${workingDir}/producer/document

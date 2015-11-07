@@ -1,6 +1,7 @@
 !Pipeline
 nodes:
   cloner: !Node
+    importance: normal
     input_ports:
       person: ${workingDir}/producer/person
     output_ports:
@@ -12,6 +13,7 @@ nodes:
     output_ports: {}
     type: JavaAction
   producer: !Node
+    importance: normal
     input_ports: {}
     output_ports:
       person: ${workingDir}/producer/person

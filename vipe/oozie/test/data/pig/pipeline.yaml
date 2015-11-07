@@ -6,12 +6,14 @@ nodes:
     output_ports: {}
     type: JavaAction
   pig_node: !Node
+    importance: normal
     input_ports:
       person: ${workingDir}/producer/person.csv
     output_ports:
       person_id: ${workingDir}/pig_node/person_id
     type: PigAction
   producer: !Node
+    importance: normal
     input_ports: {}
     output_ports:
       document: ${workingDir}/producer/doc.csv

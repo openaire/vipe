@@ -1,6 +1,7 @@
 !Pipeline
 nodes:
   consumer: !Node
+    importance: normal
     input_ports:
       document_with_authors: ${workingDir}/joiner/document_with_authors
       person_age: ${workingDir}/joiner/person_age
@@ -8,6 +9,7 @@ nodes:
     output_ports: {}
     type: JavaAction
   joiner: !Node
+    importance: normal
     input_ports:
       document: ${workingDir}/producer/document
       person: ${workingDir}/producer/person
@@ -17,6 +19,7 @@ nodes:
       person_with_documents: ${workingDir}/joiner/person_with_documents
     type: HiveAction
   producer: !Node
+    importance: normal
     input_ports: {}
     output_ports:
       document: ${workingDir}/producer/document

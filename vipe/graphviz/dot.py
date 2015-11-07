@@ -14,7 +14,7 @@
 
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
-import io.StringIO
+import io
 import re
 
 whitespace_pattern = re.compile(r'\s+')
@@ -71,23 +71,27 @@ class DotBuilder:
     
     def __init__(self):
         self.__s = io.StringIO()
+        self.__build_finished = False
+        print('digraph {', file=self.__s)
 
-    def add_edges(self, start, ends, label=None):
+    def add_edge(self, start, end, label=None):
         """
         Args:
             start (string): label of the start node
-            ends (List[string]): labels of the end nodes
+            end (string): label of the end node
         """
-        text = start+' -> {'+' '.join(ends)+'}'
+        assert self.__build_finished == False
+        text = '{} -> {}'.format(start, end)
         parameters = []
         if label is not None:
             parameters.append('label="{}"'.format(self.__normalize_label(label)))
         if len(parameters) == 0:
             print(text, file = self.__s)
         else:
-            print('{}[{}]'.format(text, ' '.join(parameters)), file = self.__s)
+            print('{}[{}]'.format(text, ' '.join(parameters)), file=self.__s)
     
-    def add_node(self, name, labels=None, color=None, shape=None):
+    def add_node(self, name, labels=None, color=None, shape=None, 
+                 width=None, height=None):
         """
         Args:
             labels (List[string]): list of labels to be printed in the node. 
@@ -96,8 +100,14 @@ class DotBuilder:
                 http://graphviz.org/doc/info/colors.html
             shape (string): value taken from 
                 http://graphviz.org/doc/info/shapes.html
+            width (float): width of the node in inches. See
+                http://graphviz.org/doc/info/attrs.html#d:width for details.
+            height (float): height of the node in inches. See
+                http://graphviz.org/doc/info/attrs.html#d:height for details.
         """
-        if (labels is None) and (color is None) and (shape is None):
+        assert self.__build_finished == False
+        if (labels is None) and (color is None) and (shape is None) and \
+                (width is None) and (height is None):
             return
         params = []
         if labels is not None:
@@ -109,13 +119,22 @@ class DotBuilder:
             params.append('fillcolor={},style=filled'.format(color))
         if shape is not None:
             params.append('shape={}'.format(shape))
-        print('{}[{}]'.format(name, ' '.join(params)), file = self.__s)
+        if width is not None or height is not None:
+            params.append('fixedsize=true')
+            if width is not None:
+                params.append('width={}'.format(width))
+            if height is not None:
+                params.append('height={}'.format(height))
+        print('{}[{}]'.format(name, ' '.join(params)), file=self.__s)
     
-    def get_result(self, output_path):
+    def get_result(self):
         """
         Returns:
             string: graph description in dot format 
         """ 
+        if self.__build_finished == False:
+            self.__build_finished = True
+            print('}', file=self.__s)
         return self.__s.getvalue()
 
     @staticmethod

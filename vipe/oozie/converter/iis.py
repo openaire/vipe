@@ -18,30 +18,44 @@ from vipe.oozie.converter.converter import PipelineConverter
 from vipe.oozie.graph import SubworkflowAction, JavaAction, \
     StreamingMapReduceAction, JavaMapReduceAction, PigAction, HiveAction, \
     Decision
-from vipe.pipeline.pipeline import Node
+from vipe.pipeline.pipeline import Node, NodeImportance
 
 class IISPipelineConverter(PipelineConverter):
     """Converter for Oozie workflows following conventions used in 
     OpenAIRE's IIS project (https://github.com/openaire/iis)"""
     
-    def convert_node(self, oozie_node):
+    def convert_node(self, name, oozie_node):
+        result = None
         if isinstance(oozie_node, SubworkflowAction):
-            return self.__handle_subworkflow(oozie_node)
+            result = self.__handle_subworkflow(oozie_node)
         elif isinstance(oozie_node, JavaAction):
-            return self.__handle_java_action(oozie_node)
+            result = self.__handle_java_action(oozie_node)
         elif isinstance(oozie_node, StreamingMapReduceAction):
-            return self.__handle_mapreduce_action(
+            result = self.__handle_mapreduce_action(
                                     oozie_node, 'StreamingMapReduceAction')
         elif isinstance(oozie_node, JavaMapReduceAction):
-            return self.__handle_java_mapreduce_action(oozie_node)
+            result = self.__handle_java_mapreduce_action(oozie_node)
         elif isinstance(oozie_node, PigAction):
-            return self.__handle_pig_action(oozie_node)
+            result = self.__handle_pig_action(oozie_node)
         elif isinstance(oozie_node, HiveAction):
-            return self.__handle_hive_action(oozie_node)
+            result = self.__handle_hive_action(oozie_node)
         elif isinstance(oozie_node, Decision):
-            return None ##TODO
+            result =  None ##TODO
         else:
-            return None
+            result =  None
+        if result is not None:
+            importance = self.__get_importance(name)
+            result.importance = importance
+        return result
+    
+    @staticmethod
+    def __get_importance(node_name):
+        if node_name.startswith('skip-') or (node_name == 'generate-schema'):
+            return NodeImportance.lowest
+        elif node_name.startswith('transformers_'):
+            return NodeImportance.low
+        else:
+            return NodeImportance.normal
     
     @staticmethod
     def __handle_subworkflow(node):

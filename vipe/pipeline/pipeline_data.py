@@ -16,8 +16,12 @@ __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
 from vipe.common.utils import default_eq
 
-class PipelineDataRegister:
-    """A register of producers and consumers of data in the Pipeline."""
+class PipelineData:
+    """An alternative representation of Pipeline with focus on data.
+    
+    A subset of information from Pipeline structure is used here, the
+    focus is on data passed between the nodes.
+    """
     
     def __init__(self, data):
         """
@@ -35,7 +39,7 @@ class PipelineDataRegister:
             pipeline (Pipeline): Pipeline to be analyzed
         
         Returns:
-            PipelineDataRegister
+            PipelineData
         """
         data = {}
         for (name, node) in pipeline.nodes.items():
@@ -47,7 +51,7 @@ class PipelineDataRegister:
                 if data_id not in data:
                     data[data_id] = DataInfo(set(), set())
                 data[data_id].consumers.add(DataAddress(name, port))
-        return PipelineDataRegister(data)
+        return PipelineData(data)
     
     @staticmethod
     def from_basic_data_types(data_dict):
@@ -82,7 +86,7 @@ class PipelineDataRegister:
                     result_consumers = result_consumers.union(result_addresses)
             result_info = DataInfo(result_producers, result_consumers)
             data[data_id] = result_info
-        return PipelineDataRegister(data)
+        return PipelineData(data)
    
     def get_ids(self):
         """
@@ -93,6 +97,9 @@ class PipelineDataRegister:
     
     def get_info(self, data_id):
         """Get information about given data
+        
+        Args:
+            data_id (string): Data ID
                 
         Returns:
             DataInfo
@@ -101,6 +108,9 @@ class PipelineDataRegister:
 
     def __eq__(self, other):
         return default_eq(self, other)
+
+    def __str__(self):
+        return self.to_yaml_dump()
 
 class DataInfo:
     """Information related to a data ID"""
@@ -117,21 +127,21 @@ class DataInfo:
     def __eq__(self, other):
         return default_eq(self, other)
 
-class DataAddress:
-    def __init__(self, name, port):
+class DataAddress:    
+    def __init__(self, node, port):
         """
         Args:
-            name (string): name of the node
-            port (string): name of the port
+            node (string): node of the node
+            port (string): node of the port
         """
-        self.name = name
+        self.node = node
         self.port = port
 
     def __eq__(self, other):
         return default_eq(self, other)
     
     def __str__(self):
-        return '{}:{}'.format(self.name, self.port)
+        return '{}:{}'.format(self.node, self.port)
     
     def __hash__(self):
         return hash(str(self))

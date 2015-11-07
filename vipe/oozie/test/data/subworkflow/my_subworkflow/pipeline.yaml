@@ -1,12 +1,14 @@
 !Pipeline
 nodes:
   cloner1: !Node
+    importance: normal
     input_ports:
       person: ${input_person}
     output_ports:
       person: ${workingDir}/cloner1/person
     type: JavaAction
   my_subsubworkflow: !Node
+    importance: normal
     input_ports:
       person: ${workingDir}/cloner1/person
     output_ports:

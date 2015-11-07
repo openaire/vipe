@@ -35,10 +35,14 @@ html-readme:
 	pandoc -N -t html -s --no-wrap -o tmp/README.html README.md
 
 run-oozie2yaml-example:
-	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); ./scripts/vipe-oozie2yaml < examples/simple_workflow/workflow.xml
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); ./scripts/vipe-oozie2yaml < examples/example_workflow/workflow.xml
 
 run-oozie2pipeline-example:
-	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); ./scripts/vipe-oozie2pipeline < vipe/oozie/reader/test/data/subworkflow/workflow.xml
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); ./scripts/vipe-oozie2pipeline < examples/example_workflow/workflow.xml
+
+run-oozie2dot-example:
+	mkdir -p tmp
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); ./scripts/vipe-oozie2dot < examples/example_workflow/workflow.xml | dot -Tpng > tmp/example.png
 
 clean:
 	rm -rf build dist $(PROJECT).egg-info docs-api tmp
