@@ -14,56 +14,109 @@
 
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
+from vipe.common.utils import default_eq
+
 class PipelineDataRegister:
     """A register of producers and consumers of data in the Pipeline."""
     
-    def __init__(self, pipeline):
+    def __init__(self, data):
         """
         Args:
-            pipeline (Pipeline): Pipeline to be analyzed
+            data (Dict[string, DataInfo]): a mapping from data ID to 
+                DataInfo object corresponding to this data
         """
-        self.__producers = {}
-        self.__consumers = {}
-        self.__data_ids = set()
-        for (name, node) in pipeline.nodes.iter():
-            self.__add_to_dict(self.__consumers, self.__data_ids, name, 
-                               node.input_ports)
-            self.__add_to_dict(self.__producers, self.__data_ids, name, 
-                               node.output_ports)
+        self.__data = data
+
+    @staticmethod
+    def from_pipeline(pipeline):
+        """Create object by analyzing Pipeline
+        
+        Args:
+            pipeline (Pipeline): Pipeline to be analyzed
+        
+        Returns:
+            PipelineDataRegister
+        """
+        data = {}
+        for (name, node) in pipeline.nodes.items():
+            for (port, data_id) in node.output_ports.items():
+                if data_id not in data:
+                    data[data_id] = DataInfo(set(), set())
+                data[data_id].producers.add(DataAddress(name, port))
+            for (port, data_id) in node.input_ports.items():
+                if data_id not in data:
+                    data[data_id] = DataInfo(set(), set())
+                data[data_id].consumers.add(DataAddress(name, port))
+        return PipelineDataRegister(data)
     
     @staticmethod
-    def __add_to_dict(dict_, data_ids, node_name, node_ports_dict):
-        for (port, data_id) in node_ports_dict.iter():
-            if data_id not in data_ids:
-                data_ids.add(data_id)
-            if data_id not in dict_:
-                dict_[data_id] = []
-            self.__dict_[data_id].append(DataAddress(node_name, port))
-    
-    def get_data_ids(self):
+    def from_basic_data_types(data_dict):
+        """Create object from a basic Python data types.
+        
+        Create it from a nested structure consisting of basic Python data types.
+        This is useful if you want to create the structure directly in the
+        code (like in tests) - it saves you some typing.
+        
+        Args:
+            data_dict (Dict[string: Dict[string, List[string]]): definition of
+                the register. It's structure can be shown schematically as:
+                data ID -> ('producers' or 'consumers' -> list of addresses in
+                a form of '$NODE_NAME:$NODE_PORT')
+        """
+        data = {}
+        for (data_id, data_info) in data_dict.items():
+            result_producers = set()
+            result_consumers = set()
+            for (elem_name, addresses) in data_info.items():
+                result_addresses = set()
+                for address_str in addresses:
+                    address_elems = address_str.split(':')
+                    assert len(address_elems) == 2
+                    result_address = \
+                        DataAddress(address_elems[0], address_elems[1])
+                    result_addresses.add(result_address)
+                assert elem_name in ['producers', 'consumers']
+                if elem_name == 'producers':
+                    result_producers = result_producers.union(result_addresses)
+                elif elem_name == 'consumers':
+                    result_consumers = result_consumers.union(result_addresses)
+            result_info = DataInfo(result_producers, result_consumers)
+            data[data_id] = result_info
+        return PipelineDataRegister(data)
+   
+    def get_ids(self):
         """
         Returns:
-            Set[string]: data IDs
+            Set[string]: IDs of all data
         """
-        return self.__data_ids
+        return self.__data.keys()
     
-    def get_producers(self, data_id):
-        """Get information about producers of given data
+    def get_info(self, data_id):
+        """Get information about given data
                 
         Returns:
-            List[DataAddress]
+            DataInfo
         """ 
-        return self.__producers[data_id]
+        return self.__data[data_id]
+
+    def __eq__(self, other):
+        return default_eq(self, other)
+
+class DataInfo:
+    """Information related to a data ID"""
     
-    def get_consumers(self, data_id):
-        """Get information about consumers of given data
-                
-        Returns:
-            List[DataAddress]
-        """ 
-        return self.__consumers[data_id]
-            
-            
+    def __init__(self, producers, consumers):
+        """
+        Args:
+            producers (Set[DataAddress]): producers of given data
+            consumers (Set[DataAddress]): consumers of given data
+        """
+        self.producers = producers
+        self.consumers = consumers
+
+    def __eq__(self, other):
+        return default_eq(self, other)
+
 class DataAddress:
     def __init__(self, name, port):
         """
@@ -73,3 +126,12 @@ class DataAddress:
         """
         self.name = name
         self.port = port
+
+    def __eq__(self, other):
+        return default_eq(self, other)
+    
+    def __str__(self):
+        return '{}:{}'.format(self.name, self.port)
+    
+    def __hash__(self):
+        return hash(str(self))
