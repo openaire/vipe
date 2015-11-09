@@ -48,11 +48,11 @@ run-oozie_yaml2pipeline-example-simple:
 
 run-pipeline2dot-example-complex:
 	mkdir -p tmp
-	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat examples/example_workflow/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline | ./scripts/vipe-pipeline2dot
+	dev_utils/run_pipeline2dot.sh examples/example_workflow/workflow.xml tmp/complex
 
 run-pipeline2dot-example-simple:
 	mkdir -p tmp
-	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat vipe/oozie/test/data/javamapreduce/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline | ./scripts/vipe-pipeline2dot
+	dev_utils/run_pipeline2dot.sh vipe/oozie/test/data/javamapreduce/workflow.xml tmp/simple
 
 run-pipeline2png-example-complex:
 	mkdir -p tmp

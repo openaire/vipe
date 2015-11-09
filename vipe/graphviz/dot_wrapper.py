@@ -15,6 +15,8 @@ from vipe.pipeline.pipeline import NodeImportance
 
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
+import re
+
 from vipe.graphviz.dot import DotBuilder
 
 class DotBuilderWrapper:
@@ -28,12 +30,11 @@ class DotBuilderWrapper:
             importance_score_map (ImportanceScoreMap):
         """
         self.__b = DotBuilder()
-        self.__reg = _NamesRegister()
         self.__e_reg = _EdgesRegister()
         self.__importance_score_map = importance_score_map
     
     def __map(self, name):
-        return self.__reg.get(name)
+        return _NamesConverter.run(name)
     
     def add_node(self, name, node):
         """Args:
@@ -114,22 +115,15 @@ class DotBuilderWrapper:
         """
         return self.__b.get_result()
 
-class _NamesRegister:
-    """
-    Register that assigns and stores mapping between user-readable names of 
-    nodes and technical identifiers used in the *.dot file.
-    """
-    def __init__(self):
-        self.__d = {}
-        self.__largest = 0
+class _NamesConverter:
+    """Convert name of a node to representation accepted by dot format."""
+    
+    __pattern = re.compile(r'([\"])')
 
-    def get(self, name):
-        """@return node identifier assigned to given name"""
-        if name not in self.__d:
-            self.__largest = self.__largest+1
-            self.__d[name] = self.__largest
-        index = self.__d[name]
-        return 'n'+str(index)
+    @staticmethod
+    def run(name):
+        escaped_name = re.sub(_NamesConverter.__pattern, r'\\\1', name)
+        return '"{}"'.format(escaped_name)
 
 class _EdgesRegister:
     """Register of all edges."""
