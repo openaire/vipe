@@ -34,19 +34,33 @@ html-readme:
 	mkdir -p tmp
 	pandoc -N -t html -s --no-wrap -o tmp/README.html README.md
 
-run-oozie2oozie_yaml-example:
+run-oozie2oozie_yaml-example-complex:
 	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat examples/example_workflow/workflow.xml | ./scripts/vipe-oozie2oozie_yaml
 
-run-oozie_yaml2pipeline-example:
+run-oozie2oozie_yaml-example-simple:
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat vipe/oozie/test/data/javamapreduce/workflow.xml | ./scripts/vipe-oozie2oozie_yaml
+
+run-oozie_yaml2pipeline-example-complex:
 	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat examples/example_workflow/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline
 
-run-pipeline2dot-example1:
-	mkdir -p tmp
-	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat examples/example_workflow/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline | ./scripts/vipe-pipeline2dot | dot -Tpng > tmp/example1.png
+run-oozie_yaml2pipeline-example-simple:
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat vipe/oozie/test/data/javamapreduce/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline
 
-run-pipeline2dot-example2:
+run-pipeline2dot-example-complex:
 	mkdir -p tmp
-	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat vipe/oozie/test/data/javamapreduce/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline | ./scripts/vipe-pipeline2dot | dot -Tpng > tmp/example2.png
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat examples/example_workflow/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline | ./scripts/vipe-pipeline2dot
+
+run-pipeline2dot-example-simple:
+	mkdir -p tmp
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat vipe/oozie/test/data/javamapreduce/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline | ./scripts/vipe-pipeline2dot
+
+run-pipeline2png-example-complex:
+	mkdir -p tmp
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat examples/example_workflow/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline | ./scripts/vipe-pipeline2dot | dot -Tpng > tmp/complex.png
+
+run-pipeline2png-example-simple:
+	mkdir -p tmp
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat vipe/oozie/test/data/javamapreduce/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline | ./scripts/vipe-pipeline2dot | dot -Tpng > tmp/simple.png
 
 clean:
 	rm -rf build dist $(PROJECT).egg-info docs-api tmp
