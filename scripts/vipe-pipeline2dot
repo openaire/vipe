@@ -20,6 +20,7 @@ import sys
 import argparse
 from vipe.oozie.reader.reader import read
 import vipe.oozie.converter.converter
+from vipe.pipeline.pipeline import Pipeline
 from vipe.oozie.converter.iis import IISPipelineConverter
 import vipe.graphviz.converter
 from vipe.graphviz.importance_score_map import DetailLevel
@@ -28,10 +29,8 @@ from vipe.graphviz.importance_score_map import DetailLevel
 def parse():
     """Parse CLI arguments"""
     parser = argparse.ArgumentParser(
-        description='Convert Oozie XML file to GraphViz dot representation. '
-            'It is assumed that the Oozie XML file follows '
-            'conventions from the OpenAIRE IIS project. '
-            'An Oozie XML file has to be provided on stdin '
+        description='Convert Pipeline YAML file to GraphViz dot representation. '
+            'The Pipeline YAML file has to be provided on stdin '
             'and the output in dot format is produced on stdout.')
     detail_level_default = 'medium'
     detail_levels = [l.name for l in DetailLevel]
@@ -53,10 +52,8 @@ def parsing_error(message):
     sys.exit(2)
 
 args = parse()
-xml_string = sys.stdin.read()
-oozie_graph = read(xml_string)
-pipeline = vipe.oozie.converter.converter.convert(
-                                        oozie_graph, IISPipelineConverter())
+pipeline_yaml = sys.stdin.read()
+pipeline = Pipeline.from_yaml_dump(pipeline_yaml)
 dot_converter = \
     vipe.graphviz.converter.Converter(DetailLevel[args.detail_level])
 dot_string = dot_converter.run(pipeline)

@@ -24,10 +24,8 @@ def parse():
     """Parse CLI arguments"""
     parser = argparse.ArgumentParser(
         description='Convert the most important parts of Oozie XML file '
-            'to a YAML file. It is assumed that the Oozie XML file follows '
-            'conventions from the OpenAIRE IIS project. ' 
-            'The XML file has to be provided on stdin '
-            'and the output will be produced on stdout.')
+            'to its representation in a YAML file. The XML file has to be '
+            'provided on stdin and the output will be produced on stdout.')
     args = parser.parse_args()
     return args
 

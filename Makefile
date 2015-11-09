@@ -34,15 +34,19 @@ html-readme:
 	mkdir -p tmp
 	pandoc -N -t html -s --no-wrap -o tmp/README.html README.md
 
-run-oozie2yaml-example:
-	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); ./scripts/vipe-oozie2yaml < examples/example_workflow/workflow.xml
+run-oozie2oozie_yaml-example:
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat examples/example_workflow/workflow.xml | ./scripts/vipe-oozie2oozie_yaml
 
-run-oozie2pipeline-example:
-	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); ./scripts/vipe-oozie2pipeline < examples/example_workflow/workflow.xml
+run-oozie_yaml2pipeline-example:
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat examples/example_workflow/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline
 
-run-oozie2dot-example:
+run-pipeline2dot-example1:
 	mkdir -p tmp
-	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); ./scripts/vipe-oozie2dot < examples/example_workflow/workflow.xml | dot -Tpng > tmp/example.png
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat examples/example_workflow/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline | ./scripts/vipe-pipeline2dot | dot -Tpng > tmp/example1.png
+
+run-pipeline2dot-example2:
+	mkdir -p tmp
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat vipe/oozie/test/data/javamapreduce/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline | ./scripts/vipe-pipeline2dot | dot -Tpng > tmp/example2.png
 
 clean:
 	rm -rf build dist $(PROJECT).egg-info docs-api tmp
