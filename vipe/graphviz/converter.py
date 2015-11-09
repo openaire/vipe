@@ -16,14 +16,17 @@ __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
 from vipe.pipeline.pipeline_data import PipelineData, DataAddress
 from vipe.graphviz.dot_wrapper import DotBuilderWrapper
-
+from vipe.graphviz.importance_score_map import ImportanceScoreMap
+from vipe.graphviz.low_score_nodes_remover import LowScoreNodesRemover
 
 class Converter:
     def __init__(self, detail_level):
         """Args:
-            detail_level (DetailLevel):
+            detail_level (DetailLevel): level of presentation details 
         """
-        self.__b = DotBuilderWrapper(detail_level)
+        score_map = ImportanceScoreMap(detail_level)
+        self.__b = DotBuilderWrapper(score_map)
+        self.__low_score_nodes_remover = LowScoreNodesRemover(score_map)
         self.__input_created = False
         self.__output_created = False
         self.__already_run = False
@@ -40,12 +43,15 @@ class Converter:
         """
         assert self.__already_run == False
         self.__already_run = True
+        
+        pipeline2 = self.__low_score_nodes_remover.run(pipeline)
+        
         ## We sort the collection to obtain the same order of output elements
         ## every time. That is, we remove non-determinism of the output.
         for (name, node) in \
-                sorted(pipeline.nodes.items(), key=lambda x: x[0]):
+                sorted(pipeline2.nodes.items(), key=lambda x: x[0]):
             self.__b.add_node(name, node)
-        pipeline_data = PipelineData.from_pipeline(pipeline)
+        pipeline_data = PipelineData.from_pipeline(pipeline2)
         
         ## We sort the collection to obtain the same order of output elements
         ## every time. That is, we remove non-determinism of the output.
@@ -56,7 +62,7 @@ class Converter:
             for end in ends:
                 self.__b.add_edge(start, end)
         return self.__b.get_result()
-
+    
     def __get_data_start(self, data_id, data_producers):
         if len(data_producers) == 0:
             if not self.__input_created:

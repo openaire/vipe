@@ -14,20 +14,16 @@
 
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
-from pkg_resources import resource_stream
-
+from vipe.common.utils import read_as_string
 from vipe.oozie.graph import OozieGraph
 
 def test_simple_java_workflow():
     check('../../test/data/java/workflow.yaml')
 
 def check(yaml_file_path):
-    graph1 = OozieGraph.from_yaml_dump(__read_string(yaml_file_path))
+    graph1 = OozieGraph.from_yaml_dump(read_as_string(__name__, yaml_file_path))
     yaml_str1 = graph1.to_yaml_dump()
     graph2 = OozieGraph.from_yaml_dump(yaml_str1)
     yaml_str2 = graph2.to_yaml_dump()
     assert yaml_str1 == yaml_str2
     assert graph1 == graph2
-
-def __read_string(relative_path):
-    return resource_stream(__name__, relative_path).read().decode("utf-8")

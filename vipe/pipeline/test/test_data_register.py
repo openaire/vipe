@@ -14,8 +14,7 @@
 
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
-from pkg_resources import resource_stream
-
+from vipe.common.utils import read_as_string
 from vipe.pipeline.pipeline import Pipeline
 from vipe.pipeline.pipeline_data import PipelineData
 
@@ -47,14 +46,8 @@ def test_multiple_consumers_and_producers():
                 'consumers': ['consumer:person']}})
 
 def check(pipeline_file_path, data_dict):
-    pipeline_yaml = __read_string(pipeline_file_path)
+    pipeline_yaml = read_as_string(__name__, pipeline_file_path)
     pipeline = Pipeline.from_yaml_dump(pipeline_yaml)
     actual_data = PipelineData.from_pipeline(pipeline)
-#     with open('/home/mafju/tmp/'+pipeline_file_path+'-data', 'w') as f:
-#         yaml_str = actual_data.to_yaml_dump()
-#         f.write(yaml_str)
     expected_data = PipelineData.from_basic_data_types(data_dict)
     assert expected_data == actual_data
-
-def __read_string(relative_path):
-    return resource_stream(__name__, relative_path).read().decode("utf-8")

@@ -14,8 +14,7 @@
 
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
-from pkg_resources import resource_stream
-
+from vipe.common.utils import read_as_string
 from vipe.oozie.graph import OozieGraph
 from vipe.pipeline.pipeline import Pipeline
 from vipe.oozie.converter.iis import IISPipelineConverter
@@ -71,12 +70,9 @@ def check_from_data_dir(dir_name):
           '../../test/data/{}/pipeline.yaml'.format(dir_name))
 
 def check(oozie_workflow_file_path, expected_pipeline_file_path):
-    oozie_yaml = __read_string(oozie_workflow_file_path)
+    oozie_yaml = read_as_string(__name__, oozie_workflow_file_path)
     oozie_graph = OozieGraph.from_yaml_dump(oozie_yaml)
     actual = convert(oozie_graph, IISPipelineConverter())
-    expected_yaml = __read_string(expected_pipeline_file_path)
+    expected_yaml = read_as_string(__name__, expected_pipeline_file_path)
     expected = Pipeline.from_yaml_dump(expected_yaml)
     assert expected == actual, 'expected={},\nactual={}'.format(expected, actual)
-
-def __read_string(relative_path):
-    return resource_stream(__name__, relative_path).read().decode("utf-8")

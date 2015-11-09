@@ -14,8 +14,7 @@
 
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
-from pkg_resources import resource_stream
-
+from vipe.common.utils import read_as_string
 import vipe.oozie.reader.reader
 from vipe.oozie.graph import OozieGraph
 
@@ -69,11 +68,8 @@ def check_from_data_dir(dir_name):
           '../../test/data/{}/workflow.yaml'.format(dir_name))
 
 def check(oozie_workflow_file_path, expected_pipeline_file_path):
-    oozie_workflow = __read_string(oozie_workflow_file_path)
+    oozie_workflow = read_as_string(__name__, oozie_workflow_file_path)
     actual = vipe.oozie.reader.reader.read(oozie_workflow)
-    expected_yaml = __read_string(expected_pipeline_file_path)
+    expected_yaml = read_as_string(__name__, expected_pipeline_file_path)
     expected = OozieGraph.from_yaml_dump(expected_yaml)
     assert expected == actual
-
-def __read_string(relative_path):
-    return resource_stream(__name__, relative_path).read().decode("utf-8")

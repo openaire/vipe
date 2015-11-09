@@ -20,6 +20,19 @@ from enum import Enum, unique
 import vipe.common.serialization
 from vipe.common.utils import default_eq
 
+@unique
+class NodeImportance(Enum):
+    """Importance of the node in the data processing workflow.
+    
+    The higher importance of the node, the more prominently it should be
+    shown on the graph. With the default details level of showing nodes
+    on the graph, the node with the `lowest` priority should be removed
+    from the graph."""
+    lowest = 1
+    very_low = 2
+    low = 3
+    normal = 4
+
 class Pipeline(yaml.YAMLObject):
     """A graph structure corresponding to workflow pipeline.
     
@@ -52,27 +65,6 @@ class Pipeline(yaml.YAMLObject):
     def from_yaml_dump(yaml_string):
         """Read the graph from YAML dump."""
         return vipe.common.serialization.from_yaml(yaml_string)
-
-@unique
-class NodeImportance(Enum):
-    """Importance of the node in the data processing workflow.
-    
-    The higher importance of the node, the more prominently it should be
-    shown on the graph. With the default details level of showing nodes
-    on the graph, the node with the `lowest` priority should be removed
-    from the graph."""
-    lowest = 1
-    very_low = 2
-    low = 3
-    normal = 4
-#     
-#     def __getstate__(self):
-#         return self.name
-#     
-#     def __setstate__(self, state):
-#         e = NodeImportance[state]
-#         self.name = e.name
-#         self.value = e.value
 
 class Node(yaml.YAMLObject):
     yaml_tag = '!Node'

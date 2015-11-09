@@ -1,0 +1,30 @@
+!Pipeline
+nodes:
+  additional_producer: !Node
+    importance: lowest
+    input_ports: {}
+    output_ports:
+      additional: ${workingDir}/additional_producer/additional
+    type: JavaAction
+  cloner: !Node
+    importance: normal
+    input_ports:
+      additional: ${workingDir}/additional_producer/additional
+      person: ${workingDir}/producer/person
+    output_ports:
+      person: ${workingDir}/cloner/person
+    type: JavaAction
+  consumer: !Node
+    importance: normal
+    input_ports:
+      person: ${workingDir}/cloner/person
+    output_ports:
+      person: {}
+    type: JavaAction
+  producer: !Node
+    importance: normal
+    input_ports: {}
+    output_ports:
+      document: ${workingDir}/producer/document
+      person: ${workingDir}/producer/person
+    type: JavaAction

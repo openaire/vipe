@@ -16,7 +16,6 @@ from vipe.pipeline.pipeline import NodeImportance
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
 from vipe.graphviz.dot import DotBuilder
-from vipe.graphviz.importance_score_map import ImportanceScoreMap
 
 class DotBuilderWrapper:
     """Wrapper for DotBuilder class.
@@ -24,13 +23,13 @@ class DotBuilderWrapper:
     It is an intermediate layer between the dot format and business logic. 
     It translates business-level node objects to concepts of the dot format.
     """
-    def __init__(self, detail_level):
+    def __init__(self, importance_score_map):
         """Args:
-            detail_level (DetailLevel):
+            importance_score_map (ImportanceScoreMap):
         """
         self.__b = DotBuilder()
         self.__reg = _NamesRegister()
-        self.__importance_score_map = ImportanceScoreMap(detail_level)
+        self.__importance_score_map = importance_score_map
     
     def __map(self, name):
         return self.__reg.get(name)
@@ -101,6 +100,9 @@ class DotBuilderWrapper:
         self.__b.add_edge(self.__map(start.node), self.__map(end.node))
     
     def get_result(self):
+        """Return:
+            string: resulting graph in dot format
+        """
         return self.__b.get_result()
 
 class _NamesRegister:

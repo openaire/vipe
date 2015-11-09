@@ -42,9 +42,12 @@ class ImportanceScoreMap:
     low           n/a
     lowest        n/a
     
-    This means that when, e.g., detail is set to `very_high`, then the 
-    consecutive importance values receive the following scores:
-    `lowest`: -1, `very_low`: 0, `low`: 1, `normal`: 2
+    This means that when, e.g., detail is set to:
+    
+    - `medium`, then the consecutive importance values receive the following 
+       scores: `lowest`: -3, `very_low`: -2, `low`: -1, `normal`: 0
+    - `very_high`, then the consecutive importance values receive the following 
+       scores: `lowest`: -1, `very_low`: 0, `low`: 1, `normal`: 2
     """
     
     def __init__(self, detail_level):
