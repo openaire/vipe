@@ -29,6 +29,7 @@ class DotBuilderWrapper:
         """
         self.__b = DotBuilder()
         self.__reg = _NamesRegister()
+        self.__e_reg = _EdgesRegister()
         self.__importance_score_map = importance_score_map
     
     def __map(self, name):
@@ -97,7 +98,15 @@ class DotBuilderWrapper:
             start (DataAddress): start of the connection
             end (DataAddress): end of the connection
         """
-        self.__b.add_edge(self.__map(start.node), self.__map(end.node))
+        ## The code below prevents multiple edges connecting given two nodes 
+        ## to be shown in the diagram. This makes sense when ports are not
+        ## shown. In a mode of showing nodes, this should not be prevented
+        ## any more.
+        if self.__e_reg.contains(start.node, end.node):
+            return
+        else:
+            self.__e_reg.add(start.node, end.node)
+            self.__b.add_edge(self.__map(start.node), self.__map(end.node))
     
     def get_result(self):
         """Return:
@@ -121,3 +130,31 @@ class _NamesRegister:
             self.__d[name] = self.__largest
         index = self.__d[name]
         return 'n'+str(index)
+
+class _EdgesRegister:
+    """Register of all edges."""
+
+    def __init__(self):
+        self.__starts = {}
+    
+    def contains(self, start, end):
+        """Args:
+            start (string): start of the edge
+            end (string): end of the edge
+        """
+        if start not in self.__starts:
+            return False
+        if end not in self.__starts[start]:
+            return False
+        return True
+    
+    def add(self, start, end):
+        """Args:
+            start (string): start of the edge
+            end (string): end of the edge
+        """
+        if start not in self.__starts:
+            self.__starts[start] = set()
+        if end in self.__starts[start]:
+            raise Exception('End "{}" already registered.'.format(end))
+        self.__starts[start].add(end)
