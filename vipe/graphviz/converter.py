@@ -40,11 +40,16 @@ class Converter:
         """
         assert self.__already_run == False
         self.__already_run = True
-        for (name, node) in pipeline.nodes.items():
+        ## We sort the collection to obtain the same order of output elements
+        ## every time. That is, we remove non-determinism of the output.
+        for (name, node) in \
+                sorted(pipeline.nodes.items(), key=lambda x: x[0]):
             self.__b.add_node(name, node)
         pipeline_data = PipelineData.from_pipeline(pipeline)
         
-        for data_id in pipeline_data.get_ids():
+        ## We sort the collection to obtain the same order of output elements
+        ## every time. That is, we remove non-determinism of the output.
+        for data_id in sorted(pipeline_data.get_ids()):
             info = pipeline_data.get_info(data_id)
             start = self.__get_data_start(data_id, info.producers)
             ends = self.__get_data_ends(data_id, info.consumers)
