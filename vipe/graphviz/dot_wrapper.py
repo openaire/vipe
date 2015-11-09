@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from vipe.pipeline.pipeline import NodeImportance
 
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
@@ -39,18 +40,29 @@ class DotBuilderWrapper:
             name (string): name of the node
             node (vipe.pipeline.pipeline.Node): data about the node
         """
+        color = self.__get_color(node.importance)
+        
         importance_score = \
             self.__importance_score_map.get_score(node.importance)
         if importance_score > -1:
             self.__b.add_node(self.__map(name), 
                             labels=[name, 'type={}'.format(node.type)], 
-                            shape='box')
+                            shape='box', color=color)
         elif importance_score == -1:
             self.__b.add_node(self.__map(name), labels=[''], shape='box',
-                              width=0.2, height=0.2)
+                              width=0.2, height=0.2, color=color)
         elif importance_score < -1:
             self.__b.add_node(self.__map(name), labels=[''], shape='box',
-                              width=0.1, height=0.1)
+                              width=0.1, height=0.1, color=color)
+    
+    @staticmethod
+    def __get_color(importance):
+        color = 'white'
+        if importance == NodeImportance.normal:
+            color = 'cyan'
+        elif importance == NodeImportance.low:
+            color = 'lightcyan'
+        return color
     
     def add_data_node(self, data_id):
         """Args:

@@ -62,6 +62,14 @@ run-pipeline2png-example-simple:
 	mkdir -p tmp
 	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat vipe/oozie/test/data/javamapreduce/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline | ./scripts/vipe-pipeline2dot | dot -Tpng > tmp/simple.png
 
+run-pipeline2png-example-complex-highest_detail:
+	mkdir -p tmp
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat examples/example_workflow/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline | ./scripts/vipe-pipeline2dot --detail_level highest | dot -Tpng > tmp/complex-highest_detail.png
+
+run-pipeline2png-example-simple-highest_detail:
+	mkdir -p tmp
+	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat vipe/oozie/test/data/javamapreduce/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline | ./scripts/vipe-pipeline2dot --detail_level highest | dot -Tpng > tmp/simple-highest_detail.png
+
 clean:
 	rm -rf build dist $(PROJECT).egg-info docs-api tmp
 
