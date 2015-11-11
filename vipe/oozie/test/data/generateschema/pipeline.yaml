@@ -6,6 +6,7 @@ nodes:
     output_ports: {}
     type: JavaAction
   transformer: !Node
+    importance: normal
     input_ports: {}
     output_ports: {}
     type: PigAction

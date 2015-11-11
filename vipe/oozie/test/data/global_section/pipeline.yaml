@@ -1,6 +1,7 @@
 !Pipeline
 nodes:
   transformer: !Node
+    importance: normal
     input_ports: {}
     output_ports: {}
     type: PigAction

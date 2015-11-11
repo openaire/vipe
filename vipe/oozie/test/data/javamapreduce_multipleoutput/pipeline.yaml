@@ -8,6 +8,7 @@ nodes:
       person: ${workingDir}/cloner/person
     type: JavaAction
   consumer: !Node
+    importance: normal
     input_ports:
       data: ${workingDir}/cloner/person
     output_ports: {}

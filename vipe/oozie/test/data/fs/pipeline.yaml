@@ -1,6 +1,7 @@
 !Pipeline
 nodes:
   check-empty-dir: !Node
+    importance: normal
     input_ports:
       input: ${workingDir}/empty
     output_ports: {}

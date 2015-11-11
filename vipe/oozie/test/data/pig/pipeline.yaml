@@ -1,6 +1,7 @@
 !Pipeline
 nodes:
   consumer: !Node
+    importance: normal
     input_ports:
       data: ${workingDir}/pig_node/person_id
     output_ports: {}

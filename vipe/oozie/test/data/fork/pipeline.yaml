@@ -1,6 +1,7 @@
 !Pipeline
 nodes:
   document_consumer: !Node
+    importance: normal
     input_ports:
       data: ${output_document}
     output_ports: {}
@@ -12,6 +13,7 @@ nodes:
       document: ${output_document}
     type: JavaAction
   person_consumer: !Node
+    importance: normal
     input_ports:
       data: ${output_person}
     output_ports: {}

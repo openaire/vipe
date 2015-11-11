@@ -1,6 +1,7 @@
 !Pipeline
 nodes:
   consumer: !Node
+    importance: normal
     input_ports:
       metadata: ${output_root}/${output_name_meta}
     output_ports: {}
