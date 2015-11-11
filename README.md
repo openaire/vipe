@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/openaire/vipe.png?branch=master)](https://travis-ci.org/openaire/vipe)
 
 
-This is a tool for visualizing Apache Oozie pipelines.
+This is a tool for visualizing Apache Oozie workflows as data flow pipelines.
 
 # License
 
@@ -15,6 +15,8 @@ Python packages that the application depends on are listed in the `requirements.
 
 - The project uses Python 3, so you need to install Python 3 version of these dependencies (on Ubuntu 14.04 system you can do it by executing, e.g. `sudo pip3 install pytest`).
 - `pyyaml` package requires `libyaml` library to be installed in the system. On Ubuntu 14.04 system, this can be installed by running `apt-get install libyaml-dev`
+
+Apart from that, [GraphViz](graphiz.org) library has to be installed in the system. On Ubuntu 14.04 system, this can installed by running `apt-get install graphviz`.
 
 # Code development
 
