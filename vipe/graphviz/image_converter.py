@@ -14,18 +14,29 @@
 
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
-class DotProcessor:
+import subprocess
+import os.path
+
+class ImageConverter:
     """Takes GraphViz's graph in dot format and generates some derivative data.
     """
     
-    def __init__(self, dot_graph):
+    def __init__(self, dot_graph, dot_program_path='/usr/bin/dot'):
         """
         Args:
             dot_graph (string): description of graph in GraphViz's dot format
+            dot_program_path (string): path to the `dot` program installed
+                in the system along with GraphViz library
         """
+        if not os.path.isfile(dot_program_path):
+            raise Exception('Given path to "dot" program ("{}") is incorrect. '
+                'It does not exist or it does not correspond to a file. '
+                'This might mean that GraphViz library is not installed '
+                'in the system.')
         self.__dot_graph = dot_graph
+        self.__dot_program_path = dot_program_path
     
-    def get_image_map(self):
+    def to_image_map(self):
         """
         Returns:
             string: client-size image map ready to be embedded in 
@@ -34,10 +45,11 @@ class DotProcessor:
         """
         raise NotImplementedError
     
-    def save_image(self, output_path):
-        """Save the image to a file at given path
+    def to_image(self):
+        """Convert the dot graph to a PNG image
         
-        Args:
-            output_path (string): path to output png file
+        Return:
+            byte string
         """
-        raise NotImplementedError
+        return subprocess.check_output([self.__dot_program_path, '-Tpng'], 
+                                       input=self.__dot_graph.encode('utf-8'))

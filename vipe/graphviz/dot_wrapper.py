@@ -76,7 +76,7 @@ class DotBuilderWrapper:
         self.__b.add_node(self.__map(data_id), shape='point')
     
     def get_input_node_name(self):
-        return 'I_N_P_U_T'
+        return 'INPUT'
     
     def add_input_node(self):
         self.__b.add_node(self.__map(self.get_input_node_name()), 
@@ -84,7 +84,7 @@ class DotBuilderWrapper:
                           shape='rarrow')
     
     def get_output_node_name(self):
-        return 'O_U_T_P_U_T'
+        return 'OUTPUT'
     
     def add_output_node(self):
         self.__b.add_node(self.__map(self.get_output_node_name()), 
