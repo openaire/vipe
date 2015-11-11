@@ -11,12 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from vipe.pipeline.pipeline import NodeImportance
 
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
 import re
 
+from vipe.pipeline.pipeline import NodeImportance
 from vipe.graphviz.dot import DotBuilder
 
 class DotBuilderWrapper:

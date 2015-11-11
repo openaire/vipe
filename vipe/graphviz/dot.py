@@ -18,52 +18,6 @@ import io
 import re
 
 whitespace_pattern = re.compile(r'\s+')
-
-# class LabelsRegister:
-#     """
-#     Register that assigns and stores mapping between user-readable labels and 
-#     technical identifiers used in the *.dot file.
-#     """
-#     def __init__(self):
-#         self.__d = {}
-#         self.__largest = 0
-# 
-#     def get(self, label):
-#         """@return node identifier assigned to given label"""
-#         if label not in self.__d:
-#             self.__largest = self.__largest+1
-#             self.__d[label] = self.__largest
-#         index = self.__d[label]
-#         return 'n'+str(index)
-    
-class DotProcessor:
-    """Takes GraphViz's graph in dot format and generates some derivative data.
-    """
-    
-    def __init__(self, dot_graph):
-        """
-        Args:
-            dot_graph (string): description of graph in GraphViz's dot format
-        """
-        self.__dot_graph = dot_graph
-    
-    def get_image_map(self):
-        """
-        Returns:
-            string: client-size image map ready to be embedded in 
-                HTML document. This is GraphViz's `cmapx` output 
-                (see http://www.graphviz.org/doc/info/output.html#a:cmapx).
-        """
-        raise NotImplementedError
-    
-    def save_image(self, output_path):
-        """Save the image to a file at given path
-        
-        Args:
-            output_path (string): path to output png file
-        """
-        raise NotImplementedError
-        
         
 class DotBuilder:
     """Tool for creating description of the graph using GraphViz's dot format.
