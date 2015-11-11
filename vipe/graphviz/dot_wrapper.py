@@ -41,6 +41,10 @@ class DotBuilderWrapper:
             name (string): name of the node
             node (vipe.pipeline.pipeline.Node): data about the node
         """
+        if (name == self.get_input_node_name()) or \
+                (name == self.get_output_node_name()):
+            raise Exception('Node name "{}" not allowed since it is a '
+                            'reserved word.'.format(name))
         color = self.__get_color(node.importance)
         
         importance_score = \
@@ -72,7 +76,7 @@ class DotBuilderWrapper:
         self.__b.add_node(self.__map(data_id), shape='point')
     
     def get_input_node_name(self):
-        return 'INPUT'
+        return 'I_N_P_U_T'
     
     def add_input_node(self):
         self.__b.add_node(self.__map(self.get_input_node_name()), 
@@ -80,7 +84,7 @@ class DotBuilderWrapper:
                           shape='rarrow')
     
     def get_output_node_name(self):
-        return 'OUTPUT'
+        return 'O_U_T_P_U_T'
     
     def add_output_node(self):
         self.__b.add_node(self.__map(self.get_output_node_name()), 
