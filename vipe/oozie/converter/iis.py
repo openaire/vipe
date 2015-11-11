@@ -21,7 +21,7 @@ from vipe.oozie.graph import SubworkflowAction, JavaAction, \
 from vipe.pipeline.pipeline import Node, NodeImportance
 
 class IISPipelineConverter(PipelineConverter):
-    """Converter for Oozie workflows following conventions used in 
+    """PipelineConverter for Oozie workflows following conventions used in 
     OpenAIRE's IIS project (https://github.com/openaire/iis)"""
     
     def convert_node(self, name, oozie_node):
@@ -67,7 +67,21 @@ class IISPipelineConverter(PipelineConverter):
     
     @staticmethod
     def __get_ports_from_configuration(type_prefix, configuration):
-        """
+        """Retrieve ports definitions from configuration of the node.
+        
+        Name of the property has to be given explicitly by following the
+        `$type_prefix_$some_name` pattern or be implicit by being defined as 
+        `$type_prefix`. In the latter case it means that the port name is
+        simply `$type_prefix`. `type_prefix` might be, e.g. "input".
+        
+        For illustration purposes, let's focus our further attention on 
+        type_prefix equal "input". 
+        
+        If there is a property "input" defined among all properties, 
+        definitions of other ports starting from 
+        "input_" are not allowed since it is assumed that there is only
+        one input port called "input".
+        
         Args:
             type_prefix (string): either 'input' or 'output'
             configuration (Dict[string, string]): configuration dictionary
@@ -105,13 +119,25 @@ class IISPipelineConverter(PipelineConverter):
     def __remove_from_list_to_str(list_, elem):
         l_removed = list_.copy().remove(elem)
         return ', '.join('"{}"'.format(str(l_removed)))
-  
+    
     @staticmethod
     def __handle_prefixed_args(args, input_prefix, output_prefix, node_type):
         input_ports = IISPipelineConverter.__get_ports_from_args(
-                                                    input_prefix, args)
+                                                    args, input_prefix)
         output_ports = IISPipelineConverter.__get_ports_from_args(
-                                                     output_prefix, args)
+                                                    args, output_prefix)
+        return Node(node_type, input_ports, output_ports)
+    
+    @staticmethod
+    def __handle_prefixed_args_with_implicit_port(
+            args, input_type_prefix, output_type_prefix, type_prefix_separator, 
+            node_type):
+        input_ports = IISPipelineConverter.\
+            __get_ports_from_args_with_implicit_port(
+                                args, input_type_prefix, type_prefix_separator)
+        output_ports = IISPipelineConverter.\
+            __get_ports_from_args_with_implicit_port(
+                                args, output_type_prefix, type_prefix_separator)
         return Node(node_type, input_ports, output_ports)
     
     @staticmethod
@@ -121,20 +147,23 @@ class IISPipelineConverter(PipelineConverter):
     
     @staticmethod
     def __handle_pig_action(node):
-        return IISPipelineConverter.__handle_prefixed_args(
-                node.params, 'input_', 'output_', 'PigAction')
+        return IISPipelineConverter.\
+            __handle_prefixed_args_with_implicit_port(
+                node.params, 'input', 'output', '_', 'PigAction')
 
     @staticmethod
     def __handle_hive_action(node):
-        return IISPipelineConverter.__handle_prefixed_args(
-                node.params, 'input_', 'output_', 'HiveAction')
+        return IISPipelineConverter.\
+            __handle_prefixed_args_with_implicit_port(
+                node.params, 'input', 'output', '_', 'HiveAction')
     
     @staticmethod
-    def __get_ports_from_args(type_prefix, args):
-        """
+    def __get_ports_from_args(args, type_prefix):
+        """Retrieve ports definitions from command line arguments of the node.
+        
         Args:
-            type_prefix (string): e.g. '-I' or '-O'
             args (Array[string]): command line arguments of the Java node
+            type_prefix (string): e.g. '-I' or '-O'
         
         Return:
             Dict[string, string]: Key is the name of the port while the value
@@ -152,9 +181,53 @@ class IISPipelineConverter(PipelineConverter):
         return ports
     
     @staticmethod
+    def __get_ports_from_args_with_implicit_port( 
+                args, type_prefix, type_prefix_separator):
+        """Retrieve ports definitions from command line arguments of the node.
+        
+        When compared with method `__get_ports_from_args`, it handles
+        implicit ports given in as command line arguments, e.g., "input".
+        
+        What is done here is analogous to what `__get_ports_from_configuration` 
+        method does (see its Python doc).
+        
+        Args:
+            args (Array[string]): command line arguments of the node
+            type_prefix (string): e.g. 'input' or 'output'
+            type_prefix_separator (string): separates type_prefix from the
+                name of the port e.g. '_'
+        
+        Return:
+            Dict[string, string]: Key is the name of the port while the value
+                is the path assigned to it.
+        """
+        normal_ports = IISPipelineConverter.__get_ports_from_args(
+                     args, '{}{}'.format(type_prefix, type_prefix_separator))
+        single_port_prefix = '{}='.format(type_prefix)
+        single_port_args = [a for a in args if a.startswith(single_port_prefix)]
+        if len(single_port_args) > 1:
+            raise Exception('More than one argument starting with "{}" '
+                            'not allowed'.format(single_port_prefix))
+        if len(single_port_args) == 1:
+            elems = single_port_args[0].split('=')
+            if len(elems) != 2:
+                raise Exception('Argument "{}" found consisting of {} '
+                                'elements separated by "=" and not 2'.format(
+                                        a, len(elems)))
+            if len(normal_ports) > 0:
+                raise Exception('When argument prefixed with "{}" is defined '
+                    'no other port definitions are allowed.'.format(
+                                                        single_port_prefix))
+            return {elems[0]: elems[1]}
+        else:
+            assert len(single_port_args) == 0
+            return normal_ports
+    
+    @staticmethod
     def __handle_java_mapreduce_action(node):
         if 'avro.mapreduce.multipleoutputs' in node.configuration:
-            return IISPipelineConverter.__handle_java_mapreduce_multiple_outputs(node)
+            return IISPipelineConverter.\
+                __handle_java_mapreduce_multiple_outputs(node)
         else:
             return IISPipelineConverter.__handle_mapreduce_action(
                                                 node, 'JavaMapReduceAction')

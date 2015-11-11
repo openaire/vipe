@@ -1,0 +1,23 @@
+!Pipeline
+nodes:
+  consumer: !Node
+    importance: normal
+    input_ports:
+      data: ${workingDir}/pig_node/person_id
+    output_ports: {}
+    type: JavaAction
+  pig_node: !Node
+    importance: normal
+    input_ports:
+      input: ${workingDir}/producer/person.csv
+    output_ports:
+      output: ${workingDir}/pig_node/person_id
+    type: PigAction
+  producer: !Node
+    importance: normal
+    input_ports: {}
+    output_ports:
+      document: ${workingDir}/producer/doc.csv
+      person: ${workingDir}/producer/person.csv
+    type: JavaAction
+

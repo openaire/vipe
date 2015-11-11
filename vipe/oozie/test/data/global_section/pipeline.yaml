@@ -2,7 +2,9 @@
 nodes:
   transformer: !Node
     importance: normal
-    input_ports: {}
-    output_ports: {}
+    input_ports:
+      input: ${input}
+    output_ports:
+      output: ${output}
     type: PigAction
 
