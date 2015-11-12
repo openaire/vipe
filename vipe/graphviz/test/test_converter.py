@@ -31,5 +31,5 @@ def test_reserved_word_as_node_name_uppercase():
 def convert_to_dot(pipeline_file_relative_path):
     pipeline_yaml = read_as_string(__name__, pipeline_file_relative_path)
     pipeline = Pipeline.from_yaml_dump(pipeline_yaml)
-    dot_converter = Converter(DetailLevel.medium)
+    dot_converter = Converter(DetailLevel.medium, False, False)
     return dot_converter.run(pipeline)

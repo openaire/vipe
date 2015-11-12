@@ -20,12 +20,15 @@ from vipe.graphviz.importance_score_map import ImportanceScoreMap
 from vipe.graphviz.low_score_nodes_remover import LowScoreNodesRemover
 
 class Converter:
-    def __init__(self, detail_level):
+    def __init__(self, detail_level, show_input_ports, show_output_ports):
         """Args:
-            detail_level (DetailLevel): level of presentation details 
+            detail_level (DetailLevel): level of presentation details
+            show_input_ports (bool): 
+            show_output_ports (bool): 
         """
         score_map = ImportanceScoreMap(detail_level)
-        self.__b = DotBuilderWrapper(score_map)
+        self.__b = DotBuilderWrapper(
+                            score_map, show_input_ports, show_output_ports)
         self.__low_score_nodes_remover = LowScoreNodesRemover(score_map)
         self.__input_created = False
         self.__output_created = False

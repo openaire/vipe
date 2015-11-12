@@ -18,6 +18,7 @@ import re
 
 from vipe.pipeline.pipeline import NodeImportance
 from vipe.graphviz.dot import DotBuilder
+from vipe.graphviz.ports_label_printer import PortsLabelPrinter, PortName
 
 class DotBuilderWrapper:
     """Wrapper for DotBuilder class.
@@ -25,13 +26,19 @@ class DotBuilderWrapper:
     It is an intermediate layer between the dot format and business logic. 
     It translates business-level node objects to concepts of the dot format.
     """
-    def __init__(self, importance_score_map):
+    def __init__(self, importance_score_map, 
+                 show_input_ports, show_output_ports):
         """Args:
             importance_score_map (ImportanceScoreMap):
+            show_input_ports (bool): 
+            show_output_ports (bool):
         """
         self.__b = DotBuilder()
         self.__e_reg = _EdgesRegister()
+        self.__n_reg = _NodesRegister()
         self.__importance_score_map = importance_score_map
+        self.__show_input_ports = show_input_ports
+        self.__show_output_ports = show_output_ports
     
     def __map(self, name):
         return _NamesConverter.run(name)
@@ -44,21 +51,25 @@ class DotBuilderWrapper:
         if name in self.get_reserved_node_names():
             raise Exception('Node name "{}" not allowed since it is a '
                             'reserved word.'.format(name))
+        
         color = self.__get_color(node.importance)
         
         importance_score = \
             self.__importance_score_map.get_score(node.importance)
         if importance_score > -1:
-            self.__b.add_node(self.__map(name), 
-                            labels=[name, 'type={}'.format(node.type)], 
-                            shape='box', color=color)
-        elif importance_score == -1:
-            self.__b.add_node(self.__map(name), labels=[''], shape='box',
-                              width=0.2, height=0.2, color=color)
-        elif importance_score < -1:
-            self.__b.add_node(self.__map(name), labels=[''], shape='box',
-                              width=0.1, height=0.1, color=color)
-    
+            self.__n_reg.add(name, _NodeInfo(self.__show_input_ports,
+                                             self.__show_output_ports))
+            self.__add_advanced_node(name, node, 
+                    self.__show_input_ports, self.__show_output_ports, color)
+        else:
+            self.__n_reg.add(name, _NodeInfo(False, False))
+            if importance_score == -1:
+                self.__b.add_node(self.__map(name), labels=[''], shape='box',
+                                  width=0.2, height=0.2, color=color)
+            elif importance_score < -1:
+                self.__b.add_node(self.__map(name), labels=[''], shape='box',
+                                  width=0.1, height=0.1, color=color)
+
     @staticmethod
     def __get_color(importance):
         color = 'white'
@@ -70,6 +81,47 @@ class DotBuilderWrapper:
     
     def get_reserved_node_names(self):
         return [self.get_input_node_name(), self.get_output_node_name()]
+
+    def __add_advanced_node(self, node_name, node, 
+                         show_input_ports, show_output_ports, color):
+        labels=[node_name, 'type={}'.format(node.type)]
+        if show_input_ports or show_output_ports:
+            input_ports = []
+            if show_input_ports:
+                input_ports = self.__port_labels_to_PortNames(
+                                            node.input_ports.keys(), True)            
+            output_ports = []
+            if show_output_ports:
+                output_ports = self.__port_labels_to_PortNames(
+                                            node.output_ports.keys(), False)
+            
+            labels = [PortsLabelPrinter().run(
+                        labels, input_ports, output_ports, color)]
+            
+            self.__b.add_node(self.__map(node_name), labels=labels, 
+                              shape='none', use_raw_labels=True)
+        else:
+            self.__b.add_node(self.__map(node_name), labels=labels, 
+                              shape='box', color=color)
+
+    
+    @staticmethod
+    def __port_labels_to_PortNames(port_labels, are_input_ports):
+        names = []
+        for n in port_labels:
+            internal_name = DotBuilderWrapper.__port_name_to_internal_name(
+                                                        n, are_input_ports)
+            names.append(PortName(n, internal_name))
+        return names   
+
+    @staticmethod
+    def __port_name_to_internal_name(name, is_input_port):
+        if name is None:
+            return None
+        prefix = 'input_'
+        if not is_input_port:
+            prefix = 'output_'
+        return '{}{}'.format(prefix, name)
     
     def add_data_node(self, data_id):
         """Args:
@@ -84,6 +136,7 @@ class DotBuilderWrapper:
         self.__b.add_node(self.__map(self.get_input_node_name()), 
                           labels=[self.get_input_node_name()], 
                           shape='rarrow')
+        self.__n_reg.add(self.get_input_node_name(), _NodeInfo(False, False))
     
     def get_output_node_name(self):
         return 'OUTPUT'
@@ -92,9 +145,10 @@ class DotBuilderWrapper:
         self.__b.add_node(self.__map(self.get_output_node_name()), 
                           labels=[self.get_output_node_name()], 
                           shape='rarrow')
+        self.__n_reg.add(self.get_output_node_name(), _NodeInfo(False, False))
     
     def add_edge(self, start, end):
-        """Add connection between two addresses. 
+        """Add connection between two nodes. 
         
         The name field of the DataAddress might be a name of a node or a
         data ID - in the latter case the address corresponds to data. 
@@ -105,15 +159,28 @@ class DotBuilderWrapper:
             start (DataAddress): start of the connection
             end (DataAddress): end of the connection
         """
-        ## The code below prevents multiple edges connecting given two nodes 
-        ## to be shown in the diagram. This makes sense when ports are not
-        ## shown. In a mode of showing nodes, this should not be prevented
-        ## any more.
-        if self.__e_reg.contains(start.node, end.node):
-            return
+        start_output_port = None
+        if self.__n_reg.contains(start.node) and \
+                self.__n_reg.get(start.node).has_visible_output_ports:
+            start_output_port = start.port
+        end_input_port = None
+        if self.__n_reg.contains(end.node) and \
+                self.__n_reg.get(end.node).has_visible_input_ports:
+            end_input_port = end.port
+        if start_output_port is not None or end_input_port is not None:
+            self.__b.add_edge(
+                    self.__map(start.node), 
+                    self.__port_name_to_internal_name(start_output_port, False), 
+                    self.__map(end.node), 
+                    self.__port_name_to_internal_name(end_input_port, True))
         else:
+            assert start_output_port is None
+            assert end_input_port is None
+            if not self.__e_reg.contains(start.node, end.node):
+                self.__b.add_edge(self.__map(start.node), None, 
+                                  self.__map(end.node), None)
+        if not self.__e_reg.contains(start.node, end.node):
             self.__e_reg.add(start.node, end.node)
-            self.__b.add_edge(self.__map(start.node), self.__map(end.node))
     
     def get_result(self):
         """Return:
@@ -129,7 +196,42 @@ class _NamesConverter:
     @staticmethod
     def run(name):
         escaped_name = re.sub(_NamesConverter.__pattern, r'\\\1', name)
-        return '"{}"'.format(escaped_name)
+        return escaped_name
+
+class _NodeInfo:
+    """Information about the node stored by _NodesRegister"""
+    
+    def __init__(self, has_visible_input_ports, has_visible_output_ports):
+        self.has_visible_input_ports = has_visible_input_ports
+        self.has_visible_output_ports = has_visible_output_ports
+
+class _NodesRegister:
+    """Register of all nodes with information relevant to visualization."""
+    
+    def __init__(self):
+        self.__nodes = {}
+    
+    def contains(self, node_name):
+        """Args:
+            node_name (string): name of the node
+        """
+        return node_name in self.__nodes
+    
+    def add(self, node_name, node_info):
+        """Args:
+            node_name (string): name of the node
+            node_info (_NodeInfo): 
+        """
+        if node_name in self.__nodes:
+            raise Exception('Node with name {} already exists in the register.'\
+                                .format(node_name))
+        self.__nodes[node_name] = node_info
+    
+    def get(self, node_name):
+        """Args:
+            node_name (string): name of the node
+        """
+        return self.__nodes[node_name]
 
 class _EdgesRegister:
     """Register of all edges."""
