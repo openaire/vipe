@@ -51,5 +51,11 @@ class ImageConverter:
         Return:
             byte string
         """
-        return subprocess.check_output([self.__dot_program_path, '-Tpng'], 
-                                       input=self.__dot_graph.encode('utf-8'))
+        p = subprocess.Popen([self.__dot_program_path, '-Tpng'], 
+                         stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+        stdout, stderr = p.communicate(self.__dot_graph.encode('utf-8'))
+        if len(stderr) > 0:
+            raise Exception('Error output produced while running'
+                            ' dot program: {} '.format(str(stderr)))
+        return stdout

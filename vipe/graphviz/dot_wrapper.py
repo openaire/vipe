@@ -17,7 +17,7 @@ __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 import re
 
 from vipe.pipeline.pipeline import NodeImportance
-from vipe.graphviz.dot import DotBuilder
+from vipe.graphviz.dot_builder import DotBuilder
 from vipe.graphviz.ports_label_printer import PortsLabelPrinter, PortName
 
 class DotBuilderWrapper:

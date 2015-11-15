@@ -1,0 +1,9 @@
+"node1"[label="" fillcolor=cyan,style=filled shape=box fixedsize=true width=0.1 height=0.1]
+"node2"[label="Node"]
+"node3" [label="Node"]
+
+"node1":"p1" -> "node2":"p21"
+"node3":"p3"  ->  "node2":"p23"
+"node2" -> "node3"
+"node2":"p2" -> "node1"
+

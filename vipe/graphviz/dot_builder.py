@@ -50,16 +50,16 @@ class DotBuilder:
             label (string): label of the edge.
         """
         assert self.__build_finished == False
-        text = '{} -> {}'.format(
+        connection_text = '{} -> {}'.format(
                 self.__build_edge_point(start, start_output_port), 
                 self.__build_edge_point(end, end_input_port))
         parameters = []
         if label is not None:
             parameters.append('label="{}"'.format(self.__normalize_label(label)))
         if len(parameters) == 0:
-            self.__print(text)
+            self.__print(connection_text)
         else:
-            self.__print('{}[{}]'.format(text, ' '.join(parameters)))
+            self.__print('{}[{}]'.format(connection_text, ' '.join(parameters)))
     
     @staticmethod
     def __build_edge_point(node, port):
@@ -112,7 +112,7 @@ class DotBuilder:
                 params.append('width={}'.format(width))
             if height is not None:
                 params.append('height={}'.format(height))
-        self.__print('"{}"[{}]'.format(name, ' '.join(params)))
+        self.__print('"{}" [{}]'.format(name, ' '.join(params)))
     
     def get_result(self):
         """

@@ -1,0 +1,25 @@
+digraph {
+"node1"[label=<
+<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR>
+    <TD ROWSPAN="2">
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+        <TR><TD ALIGN="LEFT" PORT="input_input">&#9654; input</TD></TR>
+        <TR><TD BORDER="0"> </TD></TR>
+      </TABLE>
+    </TD>
+    <TD ROWSPAN="2" BGCOLOR="cyan" BORDER="1">node 1<BR/>some text</TD>
+    <TD ROWSPAN="2">
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+        <TR><TD ALIGN="RIGHT" PORT="output_output">output &#9654;</TD></TR>
+        <TR><TD BORDER="0"> </TD></TR>
+      </TABLE>
+    </TD>
+  </TR>
+</TABLE>>
+ shape=none]
+"node2"[label=""]
+
+"node1" -> "node2"
+}
+

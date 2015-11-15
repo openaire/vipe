@@ -44,6 +44,8 @@ class ImportanceScoreMap:
     
     This means that when, e.g., detail is set to:
     
+    - `lowest`, then the consecutive importance values receive the following 
+       scores: `lowest`: -5, `very_low`: -4, `low`: -3, `normal`: -2
     - `medium`, then the consecutive importance values receive the following 
        scores: `lowest`: -3, `very_low`: -2, `low`: -1, `normal`: 0
     - `very_high`, then the consecutive importance values receive the following 

@@ -1,0 +1,74 @@
+!Pipeline
+nodes:
+  importer: !Node
+    importance: normal
+    input_ports: {}
+    output_ports:
+      person: person_id
+      document: document_id
+    type: Other
+  data_producer: !Node
+    importance: normal
+    input_ports: {}
+    output_ports:
+      dataset: dataset_id
+    type: Other
+  trivial_data_filter: !Node
+    importance: lowest
+    input_ports:
+      dataset: dataset_id
+    output_ports:
+      dataset: dataset_filtered_id
+    type: Other
+  person-transformer: !Node
+    importance: low
+    input_ports: 
+      input: person_id
+    output_ports:
+      output: cleaned_person_id
+    type: PigAction
+  dataset_additional_producer: !Node
+    importance: low
+    input_ports: {}
+    output_ports:
+      output: dataset_additional_id
+    type: Other
+  processor: !Node
+    importance: normal
+    input_ports:
+      person: cleaned_person_id
+      dataset: dataset_filtered_id
+      dataset_additional_data: dataset_additional_id
+    output_ports:
+      persons_linked_to_datasets: person_datasets_id
+    type: Other
+  processor-bypass: !Node
+    importance: lowest
+    input_ports: {}
+    output_ports: 
+      persons_to_datasets: person_datasets_id
+    type: JavaAction
+  person_summary_processor: !Node
+    importance: normal
+    input_ports:
+      person: cleaned_person_id
+      external_data: external_data_id
+    output_ports:
+      person_summary: person_summary_id
+      additional_summary1: additional_summary1_id
+      additional_summary2: additional_summary2_id
+    type: Other
+  additional_summary_consumer: !Node
+    importance: lowest
+    input_ports:
+      input1: additional_summary1_id
+      input2: additional_summary2_id
+    output_ports: {}
+    type: Other
+  exporter: !Node
+    importance: normal
+    input_ports:
+      persons_linked_to_datasets: person_datasets_id
+      person_summary: person_summary_id
+    output_ports: {}
+    type: JavaMapReduceAction 
