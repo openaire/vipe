@@ -20,6 +20,8 @@ from vipe.graphviz.importance_score_map import ImportanceScoreMap
 from vipe.graphviz.low_score_nodes_remover import LowScoreNodesRemover
 
 class Converter:
+    """Convert Pipeline to its visualization in GraphViz dot format."""
+    
     def __init__(self, detail_level, show_input_ports, show_output_ports):
         """Args:
             detail_level (DetailLevel): level of presentation details
