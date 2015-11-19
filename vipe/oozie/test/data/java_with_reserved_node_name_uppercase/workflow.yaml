@@ -1,0 +1,42 @@
+!OozieGraph
+nodes:
+  OUTPUT: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer
+    - -C{data, eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person, eu/dnetlib/iis/core/examples/java/data/person.json}
+    - -Idata=${workingDir}/cloner/person
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: end
+  cloner: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.examples.java.PersonCloner
+    - -Iperson=${workingDir}/producer/person
+    - -Operson=${workingDir}/cloner/person
+    - -Pcopies=3
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: consumer
+  end: !End {}
+  fail: !Kill {}
+  producer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.java.jsonworkflownodes.Producer
+    - -C{person, eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person, eu/dnetlib/iis/core/examples/data/person.json}
+    - -Operson=${workingDir}/producer/person
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: cloner
+  start: !Start
+    next: producer
+parameters: {}
+

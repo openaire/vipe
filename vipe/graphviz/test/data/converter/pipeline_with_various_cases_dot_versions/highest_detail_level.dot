@@ -1,4 +1,3 @@
-"importer" -> "OUTPUT"
 "importer" -> "person-transformer"
 "data_producer" -> "trivial_data_filter"
 "trivial_data_filter" -> "processor"
@@ -8,6 +7,5 @@
 "processor" -> "person_datasets_id"
 "processor-bypass" -> "person_datasets_id"
 "person_datasets_id" -> "exporter"
-"INPUT" -> "person_summary_processor"
 "person_summary_processor" -> "additional_summary_consumer"
 "person_summary_processor" -> "exporter"

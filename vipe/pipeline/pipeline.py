@@ -49,6 +49,20 @@ class Pipeline(yaml.YAMLObject):
                 to a Node object.
         """
         self.nodes = nodes
+    
+    @staticmethod
+    def get_input_node_name():
+        """Name of a special node that defines data ingested by the pipeline.
+        
+        The node with this name might not be present in the pipeline."""
+        return 'INPUT'
+    
+    @staticmethod
+    def get_output_node_name():
+        """Name of a special node that defines data produced by the pipeline.
+        
+        The node with this name might not be present in the pipeline."""
+        return 'OUTPUT'
 
     def __eq__(self, other):
         return default_eq(self, other)

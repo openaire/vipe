@@ -1,9 +1,15 @@
 !Pipeline
 nodes:
+  INPUT: !Node
+    importance: normal
+    input_ports: {}
+    output_ports:
+      input: ${input}
+    type: I/O
   consumer: !Node
     importance: normal
     input_ports:
-      metadata: ${output_root}/${output_name_meta}
+      metadata: ${local_output_root}/${local_output_name_meta}
     output_ports: {}
     type: JavaAction
   generate-schema: !Node
@@ -16,7 +22,7 @@ nodes:
     input_ports:
       input: ${input}
     output_ports:
-      ${output_name_fault}: ${output_root}/${output_name_fault}
-      ${output_name_meta}: ${output_root}/${output_name_meta}
+      ${local_output_name_fault}: ${local_output_root}/${local_output_name_fault}
+      ${local_output_name_meta}: ${local_output_root}/${local_output_name_meta}
     type: JavaMapReduceAction
 

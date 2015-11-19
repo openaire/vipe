@@ -14,6 +14,8 @@
 
 __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
+import pytest
+
 from vipe.common.utils import read_as_string
 from vipe.oozie.graph import OozieGraph
 from vipe.pipeline.pipeline import Pipeline
@@ -65,14 +67,27 @@ def test_pig():
 def test_subworkflow():
     check_from_data_dir('subworkflow')
 
+def test_java_with_reserved_node_name_lowercase():
+    check_from_data_dir('java_with_reserved_node_name_lowercase')
+     
+def test_java_with_reserved_node_name_uppercase():
+    with pytest.raises(Exception):
+        convert_oozie_yaml_to_pipeline('../../test/data/{}/workflow.yaml'\
+                              .format('java_with_reserved_node_name_uppercase'))
+
 def check_from_data_dir(dir_name):
     check('../../test/data/{}/workflow.yaml'.format(dir_name), 
           '../../test/data/{}/pipeline.yaml'.format(dir_name))
 
-def check(oozie_workflow_file_path, expected_pipeline_file_path):
+def convert_oozie_yaml_to_pipeline(oozie_workflow_file_path):
     oozie_yaml = read_as_string(__name__, oozie_workflow_file_path)
     oozie_graph = OozieGraph.from_yaml_dump(oozie_yaml)
-    actual = convert(oozie_graph, IISPipelineConverter())
-    expected_yaml = read_as_string(__name__, expected_pipeline_file_path)
-    expected = Pipeline.from_yaml_dump(expected_yaml)
-    assert expected == actual, 'expected={},\nactual={}'.format(expected, actual)
+    pipeline = convert(oozie_graph, IISPipelineConverter())
+    return pipeline
+
+def check(oozie_workflow_file_path, expected_pipeline_file_path):
+    actual_pipeline = convert_oozie_yaml_to_pipeline(oozie_workflow_file_path)
+    expected_pipeline_yaml = read_as_string(__name__, expected_pipeline_file_path)
+    expected = Pipeline.from_yaml_dump(expected_pipeline_yaml)
+    assert expected == actual_pipeline, 'expected={},\nactual={}'\
+                                            .format(expected, actual_pipeline)

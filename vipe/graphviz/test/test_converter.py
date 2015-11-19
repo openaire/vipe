@@ -69,14 +69,6 @@ class TestProducedDotGraphsWithVariusDetailLevels:
               'data/converter/pipeline_with_various_cases.yaml',
               DetailLevel.lowest, True, True)
 
-class TestReservedWords:
-    def test_reserved_word_as_node_name_lowercase(self):
-        convert_to_dot('data/converter/pipeline_with_incorrect_node_name_lowercase.yaml')
-     
-    def test_reserved_word_as_node_name_uppercase(self):
-        with pytest.raises(Exception):
-            convert_to_dot('data/converter/pipeline_with_incorrect_node_name_uppercase.yaml')
-
 def convert_to_images(pipeline_path):
     dot = {}
     dot['low'] = convert_to_dot(pipeline_path, 

@@ -64,16 +64,14 @@ class Converter:
             info = pipeline_data.get_info(data_id)
             start = self.__get_data_start(data_id, info.producers)
             ends = self.__get_data_ends(data_id, info.consumers)
-            for end in ends:
-                self.__b.add_edge(start, end)
+            if start is not None and ends is not None:
+                for end in ends:
+                    self.__b.add_edge(start, end)
         return self.__b.get_result()
     
     def __get_data_start(self, data_id, data_producers):
         if len(data_producers) == 0:
-            if not self.__input_created:
-                self.__input_created = True
-                self.__b.add_input_node()
-            return DataAddress(self.__b.get_input_node_name(), None)
+            return None
         elif len(data_producers) > 1:
             self.__b.add_data_node(data_id)
             for address in data_producers:
@@ -88,9 +86,6 @@ class Converter:
     
     def __get_data_ends(self, data_id, data_consumers):
         if len(data_consumers) == 0:
-            if not self.__output_created:
-                self.__output_created = True
-                self.__b.add_output_node()
-            return [DataAddress(self.__b.get_output_node_name(), None)]
+            return None
         else:
             return [address for address in data_consumers]

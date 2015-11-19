@@ -24,6 +24,31 @@ class IISPipelineConverter(PipelineConverter):
     """PipelineConverter for Oozie workflows following conventions used in 
     OpenAIRE's IIS project (https://github.com/openaire/iis)"""
     
+    __IO_nodes_type = 'I/O'
+    
+    def convert_parameters(self, parameters):
+        input_ = self.__get_ports_from_parameters('input', parameters, False)
+        output = self.__get_ports_from_parameters('output', parameters, True)
+        return (input_, output)
+    
+    @staticmethod
+    def __get_ports_from_parameters(prefix, parameters, 
+                                    put_ports_into_input_ports_container):
+        ports = IISPipelineConverter.__get_ports_from_configuration(
+            prefix, parameters)
+        for p in ports.keys():
+            if p == prefix:
+                ports[p] = '${'+prefix+'}'
+            else:
+                ports[p] = '${'+prefix+'_'+p+'}'
+        node = None
+        if len(ports) > 0:
+            if put_ports_into_input_ports_container:
+                node = Node(IISPipelineConverter.__IO_nodes_type, ports, {})
+            else:
+                node = Node(IISPipelineConverter.__IO_nodes_type, {}, ports)
+        return node
+    
     def convert_node(self, name, oozie_node):
         result = None
         if isinstance(oozie_node, SubworkflowAction):
@@ -91,34 +116,22 @@ class IISPipelineConverter(PipelineConverter):
                 is the path assigned to it.
         """
         keys = configuration.keys()
-        prefixed_keys = [k for k in keys if k.startswith(type_prefix)]
-        if type_prefix in prefixed_keys:
-            if len(prefixed_keys) != 1:
-                other_matching_keys = \
-                    IISPipelineConverter.__remove_from_list_to_str(prefixed_keys, 
-                                                                type_prefix)
+        expected_prefix = '{}_'.format(type_prefix)
+        prefixed_keys = [k for k in keys if k.startswith(expected_prefix)]
+        if (type_prefix in keys):
+            if len(prefixed_keys) > 0:
                 raise Exception('Among the configuration properties, there '
                     'was a property called "{}". Nevertheless, some other '
                     'properties prefixed with "{}" were found '
                     ' ({}). This is not allowed.'.format(
-                        type_prefix, type_prefix, other_matching_keys))
+                        type_prefix, expected_prefix, ', '.join(prefixed_keys)))
             return {type_prefix: configuration[type_prefix]}
         else:
             ports = {}
-            expected_prefix = '{}_'.format(type_prefix)
             for k in prefixed_keys:
-                if not k.startswith(expected_prefix):
-                    raise Exception('Expected prefix "{}", but "{}" '
-                        'is not prefixed like that. This is not allowed.'.
-                            format(expected_prefix, k))
                 suffix = k[len(expected_prefix):]
                 ports[suffix] = configuration[k]
         return ports
-    
-    @staticmethod
-    def __remove_from_list_to_str(list_, elem):
-        l_removed = list_.copy().remove(elem)
-        return ', '.join('"{}"'.format(str(l_removed)))
     
     @staticmethod
     def __handle_prefixed_args(args, input_prefix, output_prefix, node_type):

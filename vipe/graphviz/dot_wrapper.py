@@ -16,7 +16,7 @@ __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
 import re
 
-from vipe.pipeline.pipeline import NodeImportance
+from vipe.pipeline.pipeline import NodeImportance, Pipeline
 from vipe.graphviz.dot_builder import DotBuilder
 from vipe.graphviz.ports_label_printer import PortsLabelPrinter, PortName
 
@@ -53,6 +53,11 @@ class DotBuilderWrapper:
                             'reserved word.'.format(name))
         
         color = self.__get_color(node.importance)
+        if name in [Pipeline.get_input_node_name(),
+                    Pipeline.get_output_node_name()]:
+            self.__n_reg.add(name, _NodeInfo(True, True))
+            self.__add_advanced_node(name, node, True, True, color, 'folder')
+            return
         
         importance_score = \
             self.__importance_score_map.get_score(node.importance)
@@ -80,10 +85,16 @@ class DotBuilderWrapper:
         return color
     
     def get_reserved_node_names(self):
-        return [self.get_input_node_name(), self.get_output_node_name()]
+        return [Pipeline.get_input_node_name(), Pipeline.get_output_node_name()]
 
     def __add_advanced_node(self, node_name, node, 
-                         show_input_ports, show_output_ports, color):
+                         show_input_ports, show_output_ports, color, 
+                         shape=None):
+        """
+        Args:
+            shape(string): shape of the node. If None, the default
+                approach of deciding which shape is appropriate is used.
+        """
         labels=[node_name, 'type={}'.format(node.type)]
         if show_input_ports or show_output_ports:
             input_ports = []
@@ -94,21 +105,23 @@ class DotBuilderWrapper:
             if show_output_ports:
                 output_ports = self.__port_labels_to_PortNames(
                                             node.output_ports.keys(), False)
-            
             labels = [PortsLabelPrinter().run(
                         labels, input_ports, output_ports, color)]
-            
+            if shape is None:
+                shape = 'none'
             self.__b.add_node(self.__map(node_name), labels=labels, 
-                              shape='none', use_raw_labels=True)
+                              shape=shape, use_raw_labels=True)
         else:
+            if shape is None:
+                shape = 'box'
             self.__b.add_node(self.__map(node_name), labels=labels, 
-                              shape='box', color=color)
+                              shape=shape, color=color)
 
     
     @staticmethod
     def __port_labels_to_PortNames(port_labels, are_input_ports):
         names = []
-        for n in port_labels:
+        for n in sorted(port_labels):
             internal_name = DotBuilderWrapper.__port_name_to_internal_name(
                                                         n, are_input_ports)
             names.append(PortName(n, internal_name))
@@ -128,24 +141,6 @@ class DotBuilderWrapper:
             data_id (string): data ID
         """
         self.__b.add_node(self.__map(data_id), shape='point')
-    
-    def get_input_node_name(self):
-        return 'INPUT'
-    
-    def add_input_node(self):
-        self.__b.add_node(self.__map(self.get_input_node_name()), 
-                          labels=[self.get_input_node_name()], 
-                          shape='rarrow')
-        self.__n_reg.add(self.get_input_node_name(), _NodeInfo(False, False))
-    
-    def get_output_node_name(self):
-        return 'OUTPUT'
-    
-    def add_output_node(self):
-        self.__b.add_node(self.__map(self.get_output_node_name()), 
-                          labels=[self.get_output_node_name()], 
-                          shape='rarrow')
-        self.__n_reg.add(self.get_output_node_name(), _NodeInfo(False, False))
     
     def add_edge(self, start, end):
         """Add connection between two nodes. 
