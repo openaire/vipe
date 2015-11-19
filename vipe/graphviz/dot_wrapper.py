@@ -27,13 +27,17 @@ class DotBuilderWrapper:
     It translates business-level node objects to concepts of the dot format.
     """
     def __init__(self, importance_score_map, 
-                 show_input_ports, show_output_ports):
+                 show_input_ports, show_output_ports, 
+                 vertical_orientation=True):
         """Args:
             importance_score_map (ImportanceScoreMap):
             show_input_ports (bool): 
             show_output_ports (bool):
+            vertical_orientation (bool): True if the graph should be drawn
+                from top to bottom, False if it should be drawn from left to
+                right.
         """
-        self.__b = DotBuilder()
+        self.__b = DotBuilder(vertical_orientation)
         self.__e_reg = _EdgesRegister()
         self.__n_reg = _NodesRegister()
         self.__importance_score_map = importance_score_map

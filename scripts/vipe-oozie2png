@@ -45,6 +45,9 @@ def parse():
         default=False)
     parser.add_argument('--show_output_ports', action='store_true', 
         default=False)
+    parser.add_argument('--horizontal_orientation', action='store_true',
+        default=False, help='If set, the graph will have horizontal '
+                            'orientation')
     default_dot_program_path = '/usr/bin/dot'
     parser.add_argument('--dot_program', default=default_dot_program_path, 
         metavar='PATH',
@@ -67,7 +70,8 @@ xml_string = sys.stdin.read()
 oozie_graph = oozie_read(xml_string)
 pipeline = oozie_convert(oozie_graph, IISPipelineConverter())
 dot_converter = PipelineConverter(DetailLevel[args.detail_level], 
-        args.show_input_ports, args.show_output_ports)
+        args.show_input_ports, args.show_output_ports, 
+        not args.horizontal_orientation)
 dot_string = dot_converter.run(pipeline)
 dot_processor = ImageConverter(dot_string, dot_program_path=args.dot_program)
 image = dot_processor.to_image()

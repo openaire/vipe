@@ -22,15 +22,20 @@ from vipe.graphviz.low_score_nodes_remover import LowScoreNodesRemover
 class Converter:
     """Convert Pipeline to its visualization in GraphViz dot format."""
     
-    def __init__(self, detail_level, show_input_ports, show_output_ports):
+    def __init__(self, detail_level, show_input_ports, show_output_ports, 
+                 vertical_orientation=True):
         """Args:
             detail_level (DetailLevel): level of presentation details
             show_input_ports (bool): 
-            show_output_ports (bool): 
+            show_output_ports (bool):
+            vertical_orientation (bool): True if the graph should be drawn
+                from top to bottom, False if it should be drawn from left to
+                right.
         """
         score_map = ImportanceScoreMap(detail_level)
         self.__b = DotBuilderWrapper(
-                            score_map, show_input_ports, show_output_ports)
+                            score_map, show_input_ports, show_output_ports,
+                            vertical_orientation)
         self.__low_score_nodes_remover = LowScoreNodesRemover(score_map)
         self.__input_created = False
         self.__output_created = False

@@ -44,6 +44,9 @@ def parse():
         default=False)
     parser.add_argument('--show_output_ports', action='store_true', 
         default=False)
+    parser.add_argument('--horizontal_orientation', action='store_true',
+        default=False, help='If set, the graph will have horizontal '
+                            'orientation')
     args = parser.parse_args()
     if args.detail_level not in detail_levels:
         parsing_error('Entered detail_level option ("{}") is not one of the '
@@ -60,6 +63,7 @@ pipeline_yaml = sys.stdin.read()
 pipeline = Pipeline.from_yaml_dump(pipeline_yaml)
 dot_converter = vipe.graphviz.converter.Converter(
         DetailLevel[args.detail_level], 
-        args.show_input_ports, args.show_output_ports)
+        args.show_input_ports, args.show_output_ports,
+        not args.horizontal_orientation)
 dot_string = dot_converter.run(pipeline)
 print(dot_string)
