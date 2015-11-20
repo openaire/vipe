@@ -66,6 +66,12 @@ run-oozie2png-example-simple:
 	dev_utils/run_oozie2png.sh examples/simple_workflow/workflow.xml \
 		tmp/simple
 
+run-oozie2png-example-iis-workflows:
+	mkdir -p tmp
+	dev_utils/run_oozie2png.sh examples/iis_workflows/preprocessing-main.xml tmp/preprocessing-main
+	dev_utils/run_oozie2png.sh examples/iis_workflows/primary-main.xml tmp/primary-main
+	dev_utils/run_oozie2png.sh examples/iis_workflows/primary-processing.xml tmp/primary-processing
+
 clean:
 	rm -rf build dist $(PROJECT).egg-info docs-api tmp
 
