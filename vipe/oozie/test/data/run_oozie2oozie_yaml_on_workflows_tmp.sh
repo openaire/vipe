@@ -5,7 +5,7 @@ PROJECT_ROOT_DIR=../../../..
 ABSOLUTE_PROJECT_ROOT_DIR=$(cd $PROJECT_ROOT_DIR; pwd)
 MY_PYTHON_PATH=$PYTHONPATH
 
-for f in "java_with_reserved_node_name_uppercase/workflow.xml"
+for f in "subworkflow_with_root_ports/workflow.xml"
 do
 	echo "Running on '$f' ..."
 	DIR=$(dirname "$f")

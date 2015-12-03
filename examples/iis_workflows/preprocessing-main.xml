@@ -197,7 +197,11 @@
 			<description>document_referencedDatasets trust level threshold</description>
 		</property>
 		<property>
-			<name>output_remote_location</name>
+			<!-- WARNING (vipe): The name below was changed with respect to the original IIS code -->
+			<!-- because this property was interpreted as definition of an output port. -->
+			<!-- The original IIS code has to be changed as well. -->
+			<!--<name>output_remote_location</name>-->
+			<name>remote_cluster_output_location</name>
 			<value>$UNDEFINED$</value>
 			<description>optional remote cluster output location where inference
 				output dump should be distcped as sequence files.
@@ -343,6 +347,12 @@
 				<property>
 					<name>output_metadataimport_root</name>
 					<value>${workingDir}/mainworkflows_preprocessing_import/metadataimport</value>
+				</property>
+				<!-- WARNING (vipe): The property below was added to the original IIS code to make it conform -->
+				<!-- to our conventions. The original IIS code has be changed to conform to them as well. -->
+				<property>
+					<name>metadataimport_output_name_project</name>
+					<value>project</value>
 				</property>
 				<property>
 					<name>output_dataset</name>
@@ -703,7 +713,11 @@
 					<value>${workingDir}/referenceextraction_dataset/document_datasets</value>
 				</property>
 				<property>
-					<name>output_root</name>
+					<!-- WARNING (vipe): The name below was changed with respect to the original IIS code -->
+					<!-- because this property was interpreted as definition of an output port. -->
+					<!-- The original IIS code has to be changed as well. -->
+					<!--<name>output_root</name>-->
+					<name>_output_root</name>
 					<value>${workingDir}/exported_as_json</value>
 				</property>
 			</configuration>

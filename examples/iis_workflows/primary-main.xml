@@ -339,7 +339,11 @@
 			<description>protein databank URL root part to be concatenated with pdb identifier when forming final URL</description>
 		</property>
 		<property>
-			<name>output_remote_location</name>
+			<!-- WARNING (vipe): The name below was changed with respect to the original IIS code -->
+			<!-- because this property was interpreted as definition of an output port. -->
+			<!-- The original IIS code has to be changed as well. -->
+			<!--<name>output_remote_location</name>-->
+			<name>remote_cluster_output_location</name>
 			<value>$UNDEFINED$</value>
 			<description>optional remote cluster output location where inference output dump should be distcped as sequence files.
 			When not specified results will be exported straight to the ActionManager HBase.</description>
@@ -637,7 +641,11 @@
 					</value>
 				</property>
 				<property>
-					<name>input</name>
+					<!-- WARNING (vipe): The name below was changed with respect to the original IIS code -->
+					<!-- because this property was interpreted as definition of an input port. -->
+					<!-- The original IIS code has to be changed as well. -->
+					<!--<name>input</name>-->
+					<name>portal_logs_location</name>
 					<value>${portal_logs_location}</value>
 				</property>
 				<property>
@@ -1156,7 +1164,11 @@
 					<value>${workingDir}/exported/project_statistics</value>
 				</property>
 				<property>
-					<name>output_root</name>
+					<!-- WARNING (vipe): The name below was changed with respect to the original IIS code -->
+					<!-- because this property was interpreted as definition of an output port. -->
+					<!-- The original IIS code has to be changed as well. -->
+					<!--<name>output_root</name>-->
+					<name>_output_root</name>
 					<value>${workingDir}/exported_as_json</value>
 				</property>
 			</configuration>

@@ -1,0 +1,25 @@
+!Pipeline
+nodes:
+  consumer: !Node
+    importance: normal
+    input_ports:
+      person_age: ${workingDir}/my_subworkflow/person/age
+      person_eye_color: ${workingDir}/my_subworkflow/person/eye_color
+    output_ports: {}
+    type: JavaAction
+  data_producer: !Node
+    importance: normal
+    input_ports: {}
+    output_ports:
+      document: ${workingDir}/data_producer/document
+      person: ${workingDir}/data_producer/person
+    type: JavaAction
+  my_subworkflow: !Node
+    importance: normal
+    input_ports:
+      person: ${workingDir}/data_producer/person
+    output_ports:
+      person_age: ${workingDir}/my_subworkflow/person/age
+      person_eye_color: ${workingDir}/my_subworkflow/person/eye_color
+    type: SubworkflowAction
+

@@ -1,0 +1,44 @@
+!OozieGraph
+nodes:
+  consumer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer
+    - -Iperson_age=${workingDir}/my_subworkflow/person/age
+    - -Iperson_eye_color=${workingDir}/my_subworkflow/person/eye_color
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: end
+  data_producer: !JavaAction
+    args:
+    - eu.dnetlib.iis.core.examples.java.SampleDataProducer
+    - -Operson=${workingDir}/data_producer/person
+    - -Odocument=${workingDir}/data_producer/document
+    captures_output: false
+    configuration:
+      mapred.job.queue.name: ${queueName}
+    error_node: fail
+    main_class: eu.dnetlib.iis.core.java.ProcessWrapper
+    ok_node: my_subworkflow
+  end: !End {}
+  fail: !Kill {}
+  my_subworkflow: !SubworkflowAction
+    app_path: ${wf:appPath()}/my_subworkflow
+    configuration:
+      input_person: ${workingDir}/data_producer/person
+      jobTracker: ${jobTracker}
+      nameNode: ${nameNode}
+      output_person_root: ${workingDir}/my_subworkflow/person
+      person_output_name_age: age
+      person_output_name_eye_color: eye_color
+      queueName: ${queueName}
+      workingDir: ${workingDir}/my_subworkflow/working_dir
+    error_node: fail
+    ok_node: consumer
+    propagate_configuration: false
+  start: !Start
+    next: data_producer
+parameters: {}
+

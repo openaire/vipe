@@ -67,6 +67,9 @@ def test_pig():
 def test_subworkflow():
     check_from_data_dir('subworkflow')
 
+def test_subworkflow_with_root_ports():
+    check_from_data_dir('subworkflow_with_root_ports')
+
 def test_java_with_reserved_node_name_lowercase():
     check_from_data_dir('java_with_reserved_node_name_lowercase')
      
