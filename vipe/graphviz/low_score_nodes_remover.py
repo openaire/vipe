@@ -28,8 +28,19 @@ class LowScoreNodesRemover:
     def run(self, pipeline):
         """Remove nodes with importance score value below a threshold.
         
-        Apart from low score, some other criteria have to be met in order
-        to proceed with removing given node.
+        Apart from the low score, another condition must hold for a given node
+        to be removed. Namely, given node has to lack either input or output 
+        ports. This condition is a substitute of removing nodes with either 
+        no incoming or no outcoming connections. We could later implement a 
+        more precise solution where existing connections are checked 
+        (this makes sense because there might be a situation that we have a
+        port, but it is not connected to anything) 
+        
+        Note that we focus here on removing nodes with either incoming or 
+        outcoming connections missing and this is because removing such nodes
+        from a graph is easy. However, if required, we might
+        implement a solution that removes also nodes with both 
+        incoming and outcoming connections present.
         
         Args:
             pipeline (Pipeline): input pipeline.
@@ -43,14 +54,6 @@ class LowScoreNodesRemover:
             node = result.nodes[name]
             if self.__score_map.get_score(node.importance) < \
                     self.__lowest_acceptable_score:
-                ## Removing nodes with either no incoming or no outcoming 
-                ## connections is easy. That's why we do it here. 
-                ## As a substitute of checking for incoming and outcoming 
-                ## connections, we check here the presence of
-                ## input or output ports. We could later implement a more 
-                ## precise solution where in fact existing connections are 
-                ## checked (because there might be a situation that there 
-                ## is a port, but it is not connected to anything).
                 if (len(node.output_ports) == 0) or \
                     (len(node.input_ports) == 0):
                     del result.nodes[name]

@@ -35,44 +35,49 @@ html-readme:
 	pandoc -N -t html -s --no-wrap -o tmp/README.html README.md
 
 run-oozie2oozie_yaml-example-complex:
-	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat examples/complex_workflow/workflow.xml | ./scripts/vipe-oozie2oozie_yaml
+	dev_utils/run_oozie2oozie_yaml.sh examples/complex_workflow/workflow.xml
 
 run-oozie2oozie_yaml-example-simple:
-	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat examples/simple_workflow/workflow.xml | ./scripts/vipe-oozie2oozie_yaml
+	dev_utils/run_oozie2oozie_yaml.sh examples/simple_workflow/workflow.xml
 
-run-oozie_yaml2pipeline-example-complex:
-	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat examples/complex_workflow/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline
+run-oozie2pipeline-example-complex:
+	dev_utils/run_oozie2pipeline.sh examples/complex_workflow/workflow.xml
 
-run-oozie_yaml2pipeline-example-simple:
-	export PYTHONPATH=$(MY_PYTHON_PATH):$(MY_CURR_DIR); cat examples/simple_workflow/workflow.xml | ./scripts/vipe-oozie2oozie_yaml | ./scripts/vipe-oozie_yaml2pipeline
+run-oozie2pipeline-example-simple:
+	dev_utils/run_oozie2pipeline.sh examples/simple_workflow/workflow.xml
 
-run-pipeline2dot-example-complex:
+run-oozie2dot-example-complex:
 	mkdir -p tmp
-	dev_utils/run_pipeline2dot.sh examples/complex_workflow/workflow.xml tmp/complex
+	dev_utils/run_oozie2dot.sh examples/complex_workflow/workflow.xml \
+		tmp/complex
 
-run-pipeline2dot-example-simple:
+run-oozie2dot-example-simple:
 	mkdir -p tmp
-	dev_utils/run_pipeline2dot.sh examples/simple_workflow/workflow.xml tmp/simple
+	dev_utils/run_oozie2dot.sh examples/simple_workflow/workflow.xml \
+		tmp/simple
 
-run-pipeline2png-example-complex:
+run-oozie2png-example-complex:
 	mkdir -p tmp
-	dev_utils/run_pipeline2png.sh examples/complex_workflow/workflow.xml tmp/complex
+	dev_utils/run_oozie2png.sh examples/complex_workflow/workflow.xml \
+		tmp/complex
 
-run-pipeline2png-example-simple:
+run-oozie2png-example-simple:
 	mkdir -p tmp
-	dev_utils/run_pipeline2png.sh examples/simple_workflow/workflow.xml tmp/simple
+	dev_utils/run_oozie2png.sh examples/simple_workflow/workflow.xml \
+		tmp/simple
 
 clean:
 	rm -rf build dist $(PROJECT).egg-info docs-api tmp
 
-## PyPI requires the description of the package to be in the reStructuredText format.
-## This is how we generate it from the Markdown README.
+## PyPI requires the description of the package to be in the reStructuredText 
+## format. This is how we generate it from the Markdown README.
 rst-description-file:
 	mkdir -p tmp
 	pandoc --from=markdown --to=rst README.md -o tmp/README.rst
 
-## Uplading to testpypi and pypi as defined below requires two profiles to be defined 
-## in the `~/.pypirc` file: `test` and `pypi`. On my computer this looks like this:
+## Uplading to testpypi and pypi as defined below requires two profiles to be 
+## defined in the `~/.pypirc` file: `test` and `pypi`. 
+## On my computer this looks like this:
 ## 
 ## [distutils]
 ## index-servers=

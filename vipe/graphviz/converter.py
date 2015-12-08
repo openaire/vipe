@@ -44,14 +44,14 @@ class Converter:
         assert self.__already_run == False
         self.__already_run = True
         
-        pipeline2 = self.__low_score_nodes_remover.run(pipeline)
+        clean_pipeline = self.__low_score_nodes_remover.run(pipeline)
         
         ## We sort the collection to obtain the same order of output elements
         ## every time. That is, we remove non-determinism of the output.
         for (name, node) in \
-                sorted(pipeline2.nodes.items(), key=lambda x: x[0]):
+                sorted(clean_pipeline.nodes.items(), key=lambda x: x[0]):
             self.__b.add_node(name, node)
-        pipeline_data = PipelineData.from_pipeline(pipeline2)
+        pipeline_data = PipelineData.from_pipeline(clean_pipeline)
         
         ## We sort the collection to obtain the same order of output elements
         ## every time. That is, we remove non-determinism of the output.

@@ -41,8 +41,7 @@ class DotBuilderWrapper:
             name (string): name of the node
             node (vipe.pipeline.pipeline.Node): data about the node
         """
-        if (name == self.get_input_node_name()) or \
-                (name == self.get_output_node_name()):
+        if name in self.get_reserved_node_names():
             raise Exception('Node name "{}" not allowed since it is a '
                             'reserved word.'.format(name))
         color = self.__get_color(node.importance)
@@ -68,6 +67,9 @@ class DotBuilderWrapper:
         elif importance == NodeImportance.low:
             color = 'lightcyan'
         return color
+    
+    def get_reserved_node_names(self):
+        return [self.get_input_node_name(), self.get_output_node_name()]
     
     def add_data_node(self, data_id):
         """Args:
