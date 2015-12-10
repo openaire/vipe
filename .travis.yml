@@ -4,4 +4,4 @@ python:
 install: "pip install -r requirements.txt"
 script: make test
 before_install:
-  - sudo apt-get libyaml-dev graphviz
+  - sudo apt-get install libyaml-dev graphviz

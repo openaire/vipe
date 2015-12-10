@@ -135,9 +135,9 @@ class DotBuilderWrapper:
     def __port_name_to_internal_name(name, is_input_port):
         if name is None:
             return None
-        prefix = 'input_'
-        if not is_input_port:
-            prefix = 'output_'
+        prefix = 'output_'
+        if is_input_port:
+            prefix = 'input_'
         return '{}{}'.format(prefix, name)
     
     def add_data_node(self, data_id):

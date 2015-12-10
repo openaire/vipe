@@ -21,7 +21,8 @@ class SimplifiedDotGraph:
     """Simplified representation of a graph defined in dot file.
     
     This corresponds to a subset of most important things defined in a
-    dot file following certain conventions."""
+    dot file following certain conventions. 
+    See docstring of `from_dot()` function for more details."""
     
     def __init__(self, nodes, connections):
         """Args:

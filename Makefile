@@ -66,14 +66,6 @@ run-oozie2png-example-simple:
 	dev_utils/run_oozie2png.sh examples/simple_workflow/workflow.xml \
 		tmp/simple
 
-run-oozie2png-example-complex:
-	mkdir -p tmp
-	dev_utils/run_oozie2png.sh examples/complex_workflow/workflow.xml tmp/complex
-
-run-oozie2png-example-simple:
-	mkdir -p tmp
-	dev_utils/run_oozie2png.sh examples/simple_workflow/workflow.xml tmp/simple
-
 clean:
 	rm -rf build dist $(PROJECT).egg-info docs-api tmp
 

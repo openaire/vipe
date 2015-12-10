@@ -23,7 +23,7 @@ class PortName:
             internal_name (string): name of the label used internally in the 
                 definition of the dot format. It is unique for given node.
         """
-        self.label = label = label
+        self.label = label
         self.internal_name = internal_name
 
 class PortsLabelPrinter:
