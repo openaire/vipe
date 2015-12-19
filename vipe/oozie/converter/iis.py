@@ -243,10 +243,10 @@ class PortsFromConfigurationRetriever:
         For illustration purposes, let's focus our further attention on 
         type_prefix equal "input". 
         
-        If there is a property "input" defined among all properties, 
-        definitions of other ports starting from 
-        "input_" are not allowed since it is assumed that there is only
-        one input port called "input".
+        If there is a property "input" defined, it is assumed that the node 
+        has a single input port called "input" and no other input ports are 
+        allowed. If this is not true, an exception is thrown. For example, 
+        having two properties: "input" and "input_document" is not allowed.
         
         The code also handles "root ports" see Python doc of 
         `__retrieve_root_ports` method for more information about them.
