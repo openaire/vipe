@@ -19,10 +19,10 @@ import re
 from vipe.graphviz.simplified_dot_graph.connection import Connection
 
 class LineParser:
-    __node_pattern = re.compile(r'\s*"(?P<node>[\w-]+)"\s*\[.*')
-    __connection_pattern = re.compile(\
-            r'"(?P<start_node>[\w-]+)"(:"(?P<start_port>[\w-]+)")?\s*->\s*'\
-            r'"(?P<end_node>[\w-]+)"(:"(?P<end_port>[\w-]+)")?.*')
+    __node_pattern = re.compile(r'\s*"(?P<node>[^\s"]+)"\s*\[.*')
+    __connection_pattern = re.compile(
+            r'"(?P<start_node>[^\s"]+)"(:"(?P<start_port>[^\s"]+)")?\s*->\s*'
+            r'"(?P<end_node>[^\s"]+)"(:"(?P<end_port>[^\s"]+)")?.*')
     
     @staticmethod
     def parse_connection(line):

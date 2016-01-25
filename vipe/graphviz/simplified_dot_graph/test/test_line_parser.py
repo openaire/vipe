@@ -22,6 +22,10 @@ def test_node_simple():
 
 def test_node_with_hyphen():
     check_node('"citation-matching-node" [label=""]', 'citation-matching-node')
+    
+def test_node_with_non_alpha_numeric_characters():
+    check_node('"${workingDir}/citationmatching_chain/citation" [label="sf"]', 
+               '${workingDir}/citationmatching_chain/citation')
 
 def test_node_extended():
     check_node('"citationmatching_chain" [label="" fillcolor=cyan,style=filled shape=box fixedsize=true width=0.1 height=0.1]',
@@ -56,6 +60,21 @@ def test_connection_mixed_ports():
 def test_connection_with_hyphen():
     check_connection('"node-1" -> "my-node_here":"port-1"', 
                      Connection('node-1', None, 'my-node_here', 'port-1'))
+
+def test_connection_with_non_alpha_numeric_characters():
+    check_connection('"documentsclassification_main":'
+                     '"output_document_to_document_classes" -> '
+                     '"${workingDir}/documentsclassification_main/'
+                     'document_to_document_classes"',
+                     Connection('documentsclassification_main',
+                                'output_document_to_document_classes',
+                                '${workingDir}/documentsclassification_main/'
+                                'document_to_document_classes', None))
+    check_connection('"${workingDir}/citationmatching_chain/citation" -> '
+                     '"transformers_statistics":"input_citation"',
+                     Connection('${workingDir}/citationmatching_chain/'
+                                'citation', None, 'transformers_statistics',
+                                'input_citation'))
 
 def test_connection_wrong_line():
     check_connection('"citation_matching" [label="cit"]', None)

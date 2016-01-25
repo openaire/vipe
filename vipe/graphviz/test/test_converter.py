@@ -69,6 +69,12 @@ class TestProducedDotGraphsWithVariusDetailLevels:
               'data/converter/pipeline_with_various_cases.yaml',
               DetailLevel.lowest, True, True)
 
+class TestSpecialCasesOfNodeNames:
+    def test_input_and_output_nodes(self):
+        check('data/converter/pipeline_with_input_and_output_nodes-medium_details.dot',
+              'data/converter/pipeline_with_input_and_output_nodes.yaml',
+              DetailLevel.medium, False, False)
+
 def convert_to_images(pipeline_path):
     dot = {}
     dot['low'] = convert_to_dot(pipeline_path, 

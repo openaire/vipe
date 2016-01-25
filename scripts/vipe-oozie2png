@@ -18,14 +18,8 @@ __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
 import sys
 import argparse
-from vipe.oozie.reader.reader import read as oozie_read
-from vipe.oozie.converter.converter import convert as oozie_convert
-from vipe.pipeline.pipeline import Pipeline
-from vipe.oozie.converter.iis import IISPipelineConverter
-from vipe.graphviz.converter import Converter as PipelineConverter
-from vipe.graphviz.image_converter import ImageConverter
+from vipe.oozie2png import convert_oozie_to_png
 from vipe.graphviz.importance_score_map import DetailLevel
-
 
 def parse():
     """Parse CLI arguments"""
@@ -67,12 +61,7 @@ def parsing_error(message):
 
 args = parse()
 xml_string = sys.stdin.read()
-oozie_graph = oozie_read(xml_string)
-pipeline = oozie_convert(oozie_graph, IISPipelineConverter())
-dot_converter = PipelineConverter(DetailLevel[args.detail_level], 
-        args.show_input_ports, args.show_output_ports, 
-        not args.horizontal_orientation)
-dot_string = dot_converter.run(pipeline)
-dot_processor = ImageConverter(dot_string, dot_program_path=args.dot_program)
-image = dot_processor.to_image()
+image = convert_oozie_to_png(xml_string, DetailLevel[args.detail_level], 
+                             args.show_input_ports, args.show_output_ports, 
+                             not args.horizontal_orientation)
 sys.stdout.buffer.write(image)

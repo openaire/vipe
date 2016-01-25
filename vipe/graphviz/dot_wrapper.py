@@ -52,10 +52,9 @@ class DotBuilderWrapper:
             name (string): name of the node
             node (vipe.pipeline.pipeline.Node): data about the node
         """
-        if name in self.get_reserved_node_names():
-            raise Exception('Node name "{}" not allowed since it is a '
-                            'reserved word.'.format(name))
-        
+        if self.__n_reg.contains(name):
+            raise Exception('More than two nodes with the same name '
+                            '(here: "{}") are not allowed'.format(name))
         color = self.__get_color(node.importance)
         if name in [Pipeline.get_input_node_name(),
                     Pipeline.get_output_node_name()]:
@@ -87,9 +86,6 @@ class DotBuilderWrapper:
         elif importance == NodeImportance.low:
             color = 'lightcyan'
         return color
-    
-    def get_reserved_node_names(self):
-        return [Pipeline.get_input_node_name(), Pipeline.get_output_node_name()]
 
     def __add_advanced_node(self, node_name, node, 
                          show_input_ports, show_output_ports, color, 
