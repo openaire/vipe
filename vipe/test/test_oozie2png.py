@@ -1,11 +1,11 @@
 # Copyright 2013-2015 University of Warsaw
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,21 +27,22 @@ class TestEndToEndGenerateImages:
     generating image file works at all. It's not checked whether a reasonable
     output is generated.
     """
+
     def test_complex_workflow(self):
         self.__convert_to_images(
-                        '../../examples/complex_workflow/workflow.xml')
+            '../../examples/complex_workflow/workflow.xml')
 
     def test_iis_preprocessing_main_workflow(self):
         self.__convert_to_images(
-                        '../../examples/iis_workflows/preprocessing-main.xml')
+            '../../examples/iis_workflows/preprocessing-main.xml')
 
     def test_iis_primary_main_workflow(self):
         self.__convert_to_images(
-                        '../../examples/iis_workflows/primary-main.xml')
+            '../../examples/iis_workflows/primary-main.xml')
 
     def test_iis_primary_processing_workflow(self):
         self.__convert_to_images(
-                        '../../examples/iis_workflows/primary-processing.xml')
+            '../../examples/iis_workflows/primary-processing.xml')
 
     @staticmethod
     def __convert_to_images(oozie_file_path):
@@ -51,18 +52,18 @@ class TestEndToEndGenerateImages:
         show_output_ports = True
         for detail_level in DetailLevel:
             TestEndToEndGenerateImages.__convert_to_image(oozie_file_path, oozie_xml, detail_level,
-                             show_input_ports, show_output_ports,
-                             vertical_orientation)
+                                                          show_input_ports, show_output_ports,
+                                                          vertical_orientation)
         detail_level = DetailLevel.highest
         show_input_ports = False
         show_output_ports = False
         TestEndToEndGenerateImages.__convert_to_image(oozie_file_path, oozie_xml, detail_level,
-                         show_input_ports, show_output_ports,
-                         vertical_orientation)
+                                                      show_input_ports, show_output_ports,
+                                                      vertical_orientation)
         vertical_orientation = True
         TestEndToEndGenerateImages.__convert_to_image(oozie_file_path, oozie_xml, detail_level,
-                         show_input_ports, show_output_ports,
-                         vertical_orientation)
+                                                      show_input_ports, show_output_ports,
+                                                      vertical_orientation)
 
     @staticmethod
     def __convert_to_image(oozie_file_path, oozie_xml, detail_level,

@@ -1,11 +1,11 @@
 # Copyright 2013-2015 University of Warsaw
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,12 +17,13 @@ __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 import io
 import re
 
+
 class DotBuilder:
     """Tool for creating description of the graph using GraphViz's dot format.
     """
-    
+
     __whitespace_pattern = re.compile(r'\s+')
-    
+
     def __init__(self, vertical_orientation=True):
         """Args:
             vertical_orientation (bool): True if the graph should be drawn
@@ -35,7 +36,7 @@ class DotBuilder:
         if not vertical_orientation:
             self.__print('rankdir=LR')
 
-    def add_edge(self, start, start_output_port, end, end_input_port, 
+    def add_edge(self, start, start_output_port, end, end_input_port,
                  label=None):
         """
         Args:
@@ -51,16 +52,18 @@ class DotBuilder:
         """
         assert self.__build_finished == False
         connection_text = '{} -> {}'.format(
-                self.__build_edge_point(start, start_output_port), 
-                self.__build_edge_point(end, end_input_port))
+            self.__build_edge_point(start, start_output_port),
+            self.__build_edge_point(end, end_input_port))
         parameters = []
         if label is not None:
-            parameters.append('label="{}"'.format(self.__normalize_label(label)))
+            parameters.append('label="{}"'.format(
+                self.__normalize_label(label)))
         if len(parameters) == 0:
             self.__print(connection_text)
         else:
-            self.__print('{}[{}]'.format(connection_text, ' '.join(parameters)))
-    
+            self.__print('{}[{}]'.format(
+                connection_text, ' '.join(parameters)))
+
     @staticmethod
     def __build_edge_point(node, port):
         text = ['"{}"'.format(node)]
@@ -68,8 +71,8 @@ class DotBuilder:
             text.append(':')
             text.append('"{}"'.format(port))
         return ''.join(text)
-    
-    def add_node(self, name, labels=None, color=None, shape=None, 
+
+    def add_node(self, name, labels=None, color=None, shape=None,
                  width=None, height=None, use_raw_labels=False):
         """
         Args:
@@ -113,17 +116,17 @@ class DotBuilder:
             if height is not None:
                 params.append('height={}'.format(height))
         self.__print('"{}" [{}]'.format(name, ' '.join(params)))
-    
+
     def get_result(self):
         """
         Returns:
             string: graph description in dot format 
-        """ 
+        """
         if self.__build_finished == False:
             self.__build_finished = True
             self.__print('}')
         return self.__s.getvalue()
-    
+
     def __print(self, text):
         print(text, file=self.__s)
 

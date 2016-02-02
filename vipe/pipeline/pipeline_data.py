@@ -1,11 +1,11 @@
 # Copyright 2013-2015 University of Warsaw
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,13 +16,14 @@ __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 
 from vipe.common.utils import default_eq
 
+
 class PipelineData:
     """An alternative representation of Pipeline with focus on data.
-    
+
     A subset of information from Pipeline structure is used here, the
     focus is on data passed between the nodes.
     """
-    
+
     def __init__(self, data):
         """
         Args:
@@ -34,10 +35,10 @@ class PipelineData:
     @staticmethod
     def from_pipeline(pipeline):
         """Create object by analyzing Pipeline
-        
+
         Args:
             pipeline (Pipeline): Pipeline to be analyzed
-        
+
         Returns:
             PipelineData
         """
@@ -52,15 +53,15 @@ class PipelineData:
                     data[data_id] = DataInfo(set(), set())
                 data[data_id].consumers.add(DataAddress(name, port))
         return PipelineData(data)
-    
+
     @staticmethod
     def from_basic_data_types(data_dict):
         """Create object from a basic Python data types.
-        
+
         Create it from a nested structure consisting of basic Python data types.
         This is useful if you want to create the structure directly in the
         code (like in tests) - it saves you some typing.
-        
+
         Args:
             data_dict (Dict[string: Dict[string, List[string]]): definition of
                 the register. It's structure can be shown schematically as:
@@ -87,23 +88,23 @@ class PipelineData:
             result_info = DataInfo(result_producers, result_consumers)
             data[data_id] = result_info
         return PipelineData(data)
-   
+
     def get_ids(self):
         """
         Returns:
             Set[string]: IDs of all data
         """
         return self.__data.keys()
-    
+
     def get_info(self, data_id):
         """Get information about given data
-        
+
         Args:
             data_id (string): Data ID
-                
+
         Returns:
             DataInfo
-        """ 
+        """
         return self.__data[data_id]
 
     def __eq__(self, other):
@@ -112,9 +113,10 @@ class PipelineData:
     def __str__(self):
         return self.to_yaml_dump()
 
+
 class DataInfo:
     """Information related to a data ID"""
-    
+
     def __init__(self, producers, consumers):
         """
         Args:
@@ -127,7 +129,9 @@ class DataInfo:
     def __eq__(self, other):
         return default_eq(self, other)
 
-class DataAddress:    
+
+class DataAddress:
+
     def __init__(self, node, port):
         """
         Args:
@@ -139,9 +143,9 @@ class DataAddress:
 
     def __eq__(self, other):
         return default_eq(self, other)
-    
+
     def __str__(self):
         return '{}:{}'.format(self.node, self.port)
-    
+
     def __hash__(self):
         return hash(str(self))

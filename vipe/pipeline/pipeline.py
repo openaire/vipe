@@ -1,11 +1,11 @@
 # Copyright 2013-2015 University of Warsaw
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,10 +20,11 @@ from enum import Enum, unique
 import vipe.common.serialization
 from vipe.common.utils import default_eq
 
+
 @unique
 class NodeImportance(Enum):
     """Importance of the node in the data processing workflow.
-    
+
     The higher importance of the node, the more prominently it should be
     shown on the graph. With the default details level of showing nodes
     on the graph, the node with the `lowest` priority should be removed
@@ -33,15 +34,16 @@ class NodeImportance(Enum):
     low = 3
     normal = 4
 
+
 class Pipeline(yaml.YAMLObject):
     """A graph structure corresponding to workflow pipeline.
-    
+
     Producer-consumer dependencies are presented explicitly here. However,
     the information about sequence of execution of consecutive workflow nodes is
     gone.
     """
     yaml_tag = '!Pipeline'
-    
+
     def __init__(self, nodes):
         """
         Args:
@@ -49,24 +51,24 @@ class Pipeline(yaml.YAMLObject):
                 to a Node object.
         """
         self.nodes = nodes
-    
+
     @staticmethod
     def get_input_node_name():
         """Name of a special node that defines data ingested by the pipeline.
-        
+
         The node with this name might not be present in the pipeline."""
         return 'INPUT'
-    
+
     @staticmethod
     def get_output_node_name():
         """Name of a special node that defines data produced by the pipeline.
-        
+
         The node with this name might not be present in the pipeline."""
         return 'OUTPUT'
 
     def __eq__(self, other):
         return default_eq(self, other)
-    
+
     def __str__(self):
         return self.to_yaml_dump()
 
@@ -74,16 +76,17 @@ class Pipeline(yaml.YAMLObject):
         """Dump the graph to YAML.
         """
         return vipe.common.serialization.to_yaml(self)
-    
+
     @staticmethod
     def from_yaml_dump(yaml_string):
         """Read the graph from YAML dump."""
         return vipe.common.serialization.from_yaml(yaml_string)
 
+
 class Node(yaml.YAMLObject):
     yaml_tag = '!Node'
-    
-    def __init__(self, type_, input_ports, output_ports, 
+
+    def __init__(self, type_, input_ports, output_ports,
                  importance=NodeImportance.normal):
         """
         Args:
@@ -100,15 +103,15 @@ class Node(yaml.YAMLObject):
                 is analogous to `input_ports`.
             importance (Importance): how important given node is. This 
                 influences the presentation of the node on the graph.
-        """ 
+        """
         self.type = type_
         self.input_ports = input_ports
         self.output_ports = output_ports
         self.importance = importance
-        
+
     def __getstate__(self):
         """__getstate__() and __setstate__() methods are overriden.
-        
+
         This is because enum field `self.importance` by default is not 
         serialized to YAML nicely, namely the field is serialized as, e.g.:
              importance: &id001 !!python/object/apply:vipe.pipeline.pipeline.Importance
@@ -120,7 +123,7 @@ class Node(yaml.YAMLObject):
                 'input_ports': self.input_ports,
                 'output_ports': self.output_ports,
                 'importance': self.importance.name}
-    
+
     def __setstate__(self, state):
         """See the comment to __getstate__() method"""
         self.type = state['type']
