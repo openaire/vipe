@@ -49,7 +49,7 @@ def test_lowest_with_input_and_output():
 def test_output_going_nowhere():
     """ The case when the output of a node is not connected to anything.
 
-    The node should probably be removed, but is not in the current 
+    The node should probably be removed, but is not in the current
     implementation.
     """
     check_no_changes('output_going_nowhere')

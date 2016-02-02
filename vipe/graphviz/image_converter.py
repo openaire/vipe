@@ -31,17 +31,18 @@ class ImageConverter:
         """
         if not os.path.isfile(dot_program_path):
             raise Exception('Given path to "dot" program ("{}") is incorrect. '
-                            'It does not exist or it does not correspond to a file. '
-                            'This might mean that GraphViz library is not installed '
-                            'in the system.')
+                            'It does not exist or it does not correspond '
+                            'to a file. '
+                            'This might mean that GraphViz library is not '
+                            'installed in the system.')
         self.__dot_graph = dot_graph
         self.__dot_program_path = dot_program_path
 
     def to_image_map(self):
         """
         Returns:
-            string: client-size image map ready to be embedded in 
-                HTML document. This is GraphViz's `cmapx` output 
+            string: client-size image map ready to be embedded in
+                HTML document. This is GraphViz's `cmapx` output
                 (see http://www.graphviz.org/doc/info/output.html#a:cmapx).
         """
         raise NotImplementedError

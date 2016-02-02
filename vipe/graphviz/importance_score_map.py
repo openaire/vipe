@@ -30,7 +30,7 @@ class DetailLevel(Enum):
 class ImportanceScoreMap:
     """Turn NodeImportance into a score based on DetailLevel.
 
-    The score says how visible object with given importance should be on 
+    The score says how visible object with given importance should be on
     given detail level. The larger the number, the more prominent the object.
 
     The detail and importance values are aligned like this:
@@ -46,11 +46,11 @@ class ImportanceScoreMap:
 
     This means that when, e.g., detail is set to:
 
-    - `lowest`, then the consecutive importance values receive the following 
+    - `lowest`, then the consecutive importance values receive the following
        scores: `lowest`: -5, `very_low`: -4, `low`: -3, `normal`: -2
-    - `medium`, then the consecutive importance values receive the following 
+    - `medium`, then the consecutive importance values receive the following
        scores: `lowest`: -3, `very_low`: -2, `low`: -1, `normal`: 0
-    - `very_high`, then the consecutive importance values receive the following 
+    - `very_high`, then the consecutive importance values receive the following
        scores: `lowest`: -1, `very_low`: 0, `low`: 1, `normal`: 2
     """
 

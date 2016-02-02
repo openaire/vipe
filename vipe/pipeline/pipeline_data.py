@@ -27,7 +27,7 @@ class PipelineData:
     def __init__(self, data):
         """
         Args:
-            data (Dict[string, DataInfo]): a mapping from data ID to 
+            data (Dict[string, DataInfo]): a mapping from data ID to
                 DataInfo object corresponding to this data
         """
         self.__data = data
@@ -58,9 +58,9 @@ class PipelineData:
     def from_basic_data_types(data_dict):
         """Create object from a basic Python data types.
 
-        Create it from a nested structure consisting of basic Python data types.
-        This is useful if you want to create the structure directly in the
-        code (like in tests) - it saves you some typing.
+        Create it from a nested structure consisting of basic Python data
+        types. This is useful if you want to create the structure directly in
+        the code (like in tests) - it saves you some typing.
 
         Args:
             data_dict (Dict[string: Dict[string, List[string]]): definition of

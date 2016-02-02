@@ -18,7 +18,7 @@ from vipe.pipeline.pipeline import Pipeline
 
 
 class PipelineConverter:
-    """Interface to be implemented by all classes that implement conversion of 
+    """Interface to be implemented by all classes that implement conversion of
         OozieGraph to Pipeline.
     """
 
@@ -46,8 +46,8 @@ class PipelineConverter:
             oozie_node (vipe.oozie.graph.Node): OozieGraph's Node
 
         Returns:
-            vipe.pipeline.pipeline.Node: Pipeline's Node. If `None` is returned,
-                it is assumed that given node should be ignored.
+            vipe.pipeline.pipeline.Node: Pipeline's Node. If `None` is
+                returned, it is assumed that given node should be ignored.
         """
         raise NotImplementedError
 

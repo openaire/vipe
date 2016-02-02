@@ -24,7 +24,7 @@ from vipe.graphviz.ports_label_printer import PortsLabelPrinter, PortName
 class DotBuilderWrapper:
     """Wrapper for DotBuilder class.
 
-    It is an intermediate layer between the dot format and business logic. 
+    It is an intermediate layer between the dot format and business logic.
     It translates business-level node objects to concepts of the dot format.
     """
 
@@ -33,7 +33,7 @@ class DotBuilderWrapper:
                  vertical_orientation=True):
         """Args:
             importance_score_map (ImportanceScoreMap):
-            show_input_ports (bool): 
+            show_input_ports (bool):
             show_output_ports (bool):
             vertical_orientation (bool): True if the graph should be drawn
                 from top to bottom, False if it should be drawn from left to
@@ -70,7 +70,8 @@ class DotBuilderWrapper:
             self.__n_reg.add(name, _NodeInfo(self.__show_input_ports,
                                              self.__show_output_ports))
             self.__add_advanced_node(name, node,
-                                     self.__show_input_ports, self.__show_output_ports, color)
+                                     self.__show_input_ports,
+                                     self.__show_output_ports, color)
         else:
             self.__n_reg.add(name, _NodeInfo(False, False))
             if importance_score == -1:
@@ -144,12 +145,12 @@ class DotBuilderWrapper:
         self.__b.add_node(self.__map(data_id), shape='point')
 
     def add_edge(self, start, end):
-        """Add connection between two nodes. 
+        """Add connection between two nodes.
 
         The name field of the DataAddress might be a name of a node or a
-        data ID - in the latter case the address corresponds to data. 
+        data ID - in the latter case the address corresponds to data.
         The port field of the address might be set to `None`. It is
-        always `None` if the address corresponds to data. 
+        always `None` if the address corresponds to data.
 
         Args:
             start (DataAddress): start of the connection
@@ -219,7 +220,7 @@ class _NodesRegister:
     def add(self, node_name, node_info):
         """Args:
             node_name (string): name of the node
-            node_info (_NodeInfo): 
+            node_info (_NodeInfo):
         """
         if node_name in self.__nodes:
             raise Exception('Node with name {} already exists in the register.'

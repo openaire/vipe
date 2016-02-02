@@ -29,8 +29,8 @@ class OozieGraph(yaml.YAMLObject):
         Args:
             parameters (Dict[string, string]): the key
                 is the node of parameter and the value is it's value.
-            nodes (Dict[string, Node]): a dictionary mapping node of a node 
-                to a Node object. The node with node 'start' is the one that 
+            nodes (Dict[string, Node]): a dictionary mapping node of a node
+                to a Node object. The node with node 'start' is the one that
                 the workflow starts from.
         """
         self.parameters = parameters
@@ -54,7 +54,8 @@ class OozieGraph(yaml.YAMLObject):
 
         Note that intially I named this method `to_yaml()`, but this
         interfered with the YAML serialization process and this exception
-        was thrown: "TypeError: to_yaml() takes 1 positional argument but 2 were given"
+        was thrown: "TypeError: to_yaml() takes 1 positional argument but 2
+        were given"
         """
         return vipe.common.serialization.to_yaml(self)
 
@@ -73,9 +74,9 @@ class Action(Node):
     def __init__(self, ok_node, error_node, configuration):
         """
         Args:
-            ok_node: node of Node object that is executed after this Action 
+            ok_node: node of Node object that is executed after this Action
                 if no errors occurred during execution.
-            error_node: node of Node object that is executed after this Action 
+            error_node: node of Node object that is executed after this Action
                 if an error occurred during execution.
             configuration (Dict[string, string]): the key is
                 the node of configuration property and the value is the
@@ -133,9 +134,9 @@ class JavaAction(Action):
         """
         Args:
             main_class (string): node of Java class with the `main` method.
-            args (List[string]): contains command line arguments passed to 
+            args (List[string]): contains command line arguments passed to
             the `main` method.
-            captures_output (bool): True if the node has option of 
+            captures_output (bool): True if the node has option of
                 capturing output set, False otherwise.
         """
         super().__init__(ok_node, error_node, configuration)
@@ -254,7 +255,8 @@ class Join(Node):
     def __init__(self, next_):
         """
         Args:
-            next (string): A node of Node that should be executed after this one.
+            next (string): A node of Node that should be executed after this
+            one.
         """
         self.next = next_
 
@@ -285,7 +287,7 @@ class DecisionCase(yaml.YAMLObject):
         """
         Args:
             condition (string): switch condition.
-            target (string): A node of Node that will be executed after the 
+            target (string): A node of Node that will be executed after the
                 condition is met.
         """
         self.condition = condition
@@ -301,7 +303,7 @@ class Start(Node):
     def __init__(self, next_):
         """
         Args:
-            next (string): A node of Node that should be executed after 
+            next (string): A node of Node that should be executed after
                 this one.
         """
         self.next = next_

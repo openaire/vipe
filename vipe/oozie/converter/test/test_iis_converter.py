@@ -94,7 +94,7 @@ def test_java_with_reserved_node_name_lowercase():
 def test_java_with_reserved_node_name_uppercase():
     with pytest.raises(Exception):
         convert_oozie_yaml_to_pipeline('../../test/data/{}/workflow.yaml'
-                                       .format('java_with_reserved_node_name_uppercase'))
+                            .format('java_with_reserved_node_name_uppercase'))
 
 
 def check_from_data_dir(dir_name):

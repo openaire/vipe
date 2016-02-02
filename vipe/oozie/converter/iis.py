@@ -24,7 +24,7 @@ from vipe.pipeline.pipeline import Node, NodeImportance
 
 
 class IISPipelineConverter(PipelineConverter):
-    """PipelineConverter for Oozie workflows following conventions used in 
+    """PipelineConverter for Oozie workflows following conventions used in
     OpenAIRE's IIS project (https://github.com/openaire/iis)"""
 
     __IO_nodes_type = 'I/O'
@@ -165,8 +165,8 @@ class IISPipelineConverter(PipelineConverter):
         When compared with method `__get_ports_from_args`, it handles
         implicit ports given in as command line arguments, e.g., "input".
 
-        What is done here is analogous to what 
-        `PortsFromConfigurationRetriever.run` 
+        What is done here is analogous to what
+        `PortsFromConfigurationRetriever.run`
         method does (see its Python doc).
 
         Args:
@@ -195,8 +195,8 @@ class IISPipelineConverter(PipelineConverter):
                                     a, len(elems)))
             if len(normal_ports) > 0:
                 raise Exception('When argument prefixed with "{}" is defined '
-                                'no other port definitions are allowed.'.format(
-                                    single_port_prefix))
+                                'no other port definitions are allowed.'.
+                                format(single_port_prefix))
             return {elems[0]: elems[1]}
         else:
             assert len(single_port_args) == 0
@@ -239,19 +239,19 @@ class PortsFromConfigurationRetriever:
         """Retrieve ports definitions from configuration of the node.
 
         Name of the property has to be given explicitly by following the
-        `$type_prefix_$some_name` pattern or be implicit by being defined as 
+        `$type_prefix_$some_name` pattern or be implicit by being defined as
         `$type_prefix`. In the latter case it means that the port name is
         simply `$type_prefix`. `type_prefix` might be, e.g. "input".
 
-        For illustration purposes, let's focus our further attention on 
-        type_prefix equal "input". 
+        For illustration purposes, let's focus our further attention on
+        type_prefix equal "input".
 
-        If there is a property "input" defined, it is assumed that the node 
-        has a single input port called "input" and no other input ports are 
-        allowed. If this is not true, an exception is thrown. For example, 
+        If there is a property "input" defined, it is assumed that the node
+        has a single input port called "input" and no other input ports are
+        allowed. If this is not true, an exception is thrown. For example,
         having two properties: "input" and "input_document" is not allowed.
 
-        The code also handles "root ports" see Python doc of 
+        The code also handles "root ports" see Python doc of
         `__retrieve_root_ports` method for more information about them.
 
         Args:
@@ -268,16 +268,18 @@ class PortsFromConfigurationRetriever:
         if (type_prefix in keys):
             if len(prefixed_keys) > 0:
                 raise Exception('Among the configuration properties, there '
-                                'was a property called "{}". Nevertheless, some other '
-                                'properties prefixed with "{}" were found '
-                                ' ({}). This is not allowed.'.format(
-                                    type_prefix, expected_prefix, ', '.join(prefixed_keys)))
+                                'was a property called "{}". Nevertheless, '
+                                'some other properties prefixed with "{}" '
+                                'were found ({}). This is not allowed.'.format(
+                                    type_prefix, expected_prefix, ', '.
+                                    join(prefixed_keys)))
             return {type_prefix: configuration[type_prefix]}
         else:
             ports = PortsFromConfigurationRetriever.__retrieve_root_ports(
                 type_prefix, configuration)
             root_port_regexp = re.compile(PortsFromConfigurationRetriever.
-                                          __root_port_regexp_template.format(type_prefix=type_prefix))
+                                          __root_port_regexp_template.format(
+                                                    type_prefix=type_prefix))
             for k in prefixed_keys:
                 match_root_port = root_port_regexp.match(k)
                 # Skip root ports since they have been handle already
@@ -291,9 +293,9 @@ class PortsFromConfigurationRetriever:
     def __retrieve_root_ports(type_prefix, configuration):
         """Handle root ports.
 
-        A single root port is defined through two entries in the 
-        `configuration` dictionary, one being the "root" and the other one being
-        the "leaf". For example, in configuration 
+        A single root port is defined through two entries in the
+        `configuration` dictionary, one being the "root" and the other one
+        being the "leaf". For example, in configuration
         `{'output_person_root': 'person_root', 'person_output_name_age': 'age'}`
         the former entry is the root while the latter is the leaf. Processing
         this configuration when `type_prefix='output'` should produce the
@@ -302,14 +304,16 @@ class PortsFromConfigurationRetriever:
         ports = {}
         keys = configuration.keys()
         root_regexp = re.compile(PortsFromConfigurationRetriever.
-                                 __root_port_regexp_template.format(type_prefix=type_prefix))
+                                 __root_port_regexp_template.format(
+                                                    type_prefix=type_prefix))
         for k_root in keys:
             match_root = root_regexp.match(k_root)
             if match_root:
                 root_name = match_root.group('root_name')
                 leaf_regexp = re.compile(PortsFromConfigurationRetriever.
-                                         __leaf_port_regexp_template.format(root_name=root_name,
-                                                                            type_prefix=type_prefix))
+                                         __leaf_port_regexp_template.format(
+                                                    root_name=root_name,
+                                                    type_prefix=type_prefix))
                 at_least_one_leaf_found = False
                 for k_leaf in keys:
                     match_leaf = leaf_regexp.match(k_leaf)
@@ -321,6 +325,7 @@ class PortsFromConfigurationRetriever:
                         at_least_one_leaf_found = True
                 if not at_least_one_leaf_found:
                     raise Exception('No leaf port found that would correspond '
-                                    'to port root "{}" (defined in property named "{}")'.
+                                    'to port root "{}" '
+                                    '(defined in property named "{}")'.
                                     format(root_name, k_root))
         return ports

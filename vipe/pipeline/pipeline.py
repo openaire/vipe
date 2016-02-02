@@ -39,15 +39,15 @@ class Pipeline(yaml.YAMLObject):
     """A graph structure corresponding to workflow pipeline.
 
     Producer-consumer dependencies are presented explicitly here. However,
-    the information about sequence of execution of consecutive workflow nodes is
-    gone.
+    the information about sequence of execution of consecutive workflow nodes
+    is gone.
     """
     yaml_tag = '!Pipeline'
 
     def __init__(self, nodes):
         """
         Args:
-            nodes (Dict[string, Node]): a dictionary mapping node of a node 
+            nodes (Dict[string, Node]): a dictionary mapping node of a node
                 to a Node object.
         """
         self.nodes = nodes
@@ -91,17 +91,17 @@ class Node(yaml.YAMLObject):
         """
         Args:
             type_ (string): a description of the type of the node.
-            input_ports (Dict[string, string]): ports from which the node takes 
-                data to consume. 
-                The key in the dictionary is the node of the port, the value 
-                is a data identifier. This is an identifier of the data 
-                consumed on this port. A producer port of one node is connected 
-                to a consumer port of another node by specifying the same 
+            input_ports (Dict[string, string]): ports from which the node takes
+                data to consume.
+                The key in the dictionary is the node of the port, the value
+                is a data identifier. This is an identifier of the data
+                consumed on this port. A producer port of one node is connected
+                to a consumer port of another node by specifying the same
                 data identifier.
-            output_ports (Dict[string, string]): ports to which the node 
+            output_ports (Dict[string, string]): ports to which the node
                 produces data. The meaning of the elements of the dictionary
                 is analogous to `input_ports`.
-            importance (Importance): how important given node is. This 
+            importance (Importance): how important given node is. This
                 influences the presentation of the node on the graph.
         """
         self.type = type_
@@ -112,11 +112,11 @@ class Node(yaml.YAMLObject):
     def __getstate__(self):
         """__getstate__() and __setstate__() methods are overriden.
 
-        This is because enum field `self.importance` by default is not 
+        This is because enum field `self.importance` by default is not
         serialized to YAML nicely, namely the field is serialized as, e.g.:
              importance: &id001 !!python/object/apply:vipe.pipeline.pipeline.Importance
              - 4
-        Overriding these two methods gives us control over how this 
+        Overriding these two methods gives us control over how this
         enum field (and other fields as well) are serialized.
         """
         return {'type': self.type,

@@ -50,7 +50,7 @@ class DotBuilder:
                 its port (if any).
             label (string): label of the edge.
         """
-        assert self.__build_finished == False
+        assert self.__build_finished is False
         connection_text = '{} -> {}'.format(
             self.__build_edge_point(start, start_output_port),
             self.__build_edge_point(end, end_input_port))
@@ -76,11 +76,11 @@ class DotBuilder:
                  width=None, height=None, use_raw_labels=False):
         """
         Args:
-            labels (List[string]): list of labels to be printed in the node. 
+            labels (List[string]): list of labels to be printed in the node.
             Each label is placed in a separate line.
-            color (string): value taken from 
+            color (string): value taken from
                 http://graphviz.org/doc/info/colors.html
-            shape (string): value taken from 
+            shape (string): value taken from
                 http://graphviz.org/doc/info/shapes.html
             width (float): width of the node in inches. See
                 http://graphviz.org/doc/info/attrs.html#d:width for details.
@@ -89,7 +89,7 @@ class DotBuilder:
             use_raw_labels (bool): if True, the labels given as the input
                 is not preprocessed.
         """
-        assert self.__build_finished == False
+        assert self.__build_finished is False
         if (labels is None) and (color is None) and (shape is None) and \
                 (width is None) and (height is None):
             return
@@ -120,9 +120,9 @@ class DotBuilder:
     def get_result(self):
         """
         Returns:
-            string: graph description in dot format 
+            string: graph description in dot format
         """
-        if self.__build_finished == False:
+        if self.__build_finished is False:
             self.__build_finished = True
             self.__print('}')
         return self.__s.getvalue()

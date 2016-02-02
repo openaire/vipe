@@ -51,19 +51,22 @@ class TestEndToEndGenerateImages:
         show_input_ports = True
         show_output_ports = True
         for detail_level in DetailLevel:
-            TestEndToEndGenerateImages.__convert_to_image(oozie_file_path, oozie_xml, detail_level,
-                                                          show_input_ports, show_output_ports,
-                                                          vertical_orientation)
+            TestEndToEndGenerateImages.__convert_to_image(oozie_file_path,
+                                    oozie_xml, detail_level,
+                                    show_input_ports, show_output_ports,
+                                    vertical_orientation)
         detail_level = DetailLevel.highest
         show_input_ports = False
         show_output_ports = False
-        TestEndToEndGenerateImages.__convert_to_image(oozie_file_path, oozie_xml, detail_level,
-                                                      show_input_ports, show_output_ports,
-                                                      vertical_orientation)
+        TestEndToEndGenerateImages.__convert_to_image(oozie_file_path, 
+                                    oozie_xml, detail_level,
+                                    show_input_ports, show_output_ports,
+                                    vertical_orientation)
         vertical_orientation = True
-        TestEndToEndGenerateImages.__convert_to_image(oozie_file_path, oozie_xml, detail_level,
-                                                      show_input_ports, show_output_ports,
-                                                      vertical_orientation)
+        TestEndToEndGenerateImages.__convert_to_image(oozie_file_path, 
+                                    oozie_xml, detail_level,
+                                    show_input_ports, show_output_ports,
+                                    vertical_orientation)
 
     @staticmethod
     def __convert_to_image(oozie_file_path, oozie_xml, detail_level,

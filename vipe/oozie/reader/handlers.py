@@ -17,8 +17,9 @@ __author__ = "Mateusz Kobos mkobos@icm.edu.pl"
 from vipe.oozie.reader.utils import properties_to_dict, get_text, \
     findall_to_text, find_to_text
 from vipe.oozie.graph import DecisionCase, Decision, End, Kill, Fork, Join, \
-    Start, OtherAction, SubworkflowAction, JavaAction, StreamingMapReduceAction, \
-    JavaMapReduceAction, PigAction, HiveAction, FSAction, DistCPAction
+    Start, OtherAction, SubworkflowAction, JavaAction, \
+    StreamingMapReduceAction, JavaMapReduceAction, PigAction, HiveAction, \
+    FSAction, DistCPAction
 
 
 def handle_action(elem):
@@ -51,7 +52,8 @@ def handle_action(elem):
             mapper = find_to_text(streaming_elem, 'mapper')
             reducer = find_to_text(streaming_elem, 'reducer')
             return (name, StreamingMapReduceAction(ok_node, error_node,
-                                                   configuration, mapper, reducer))
+                                                   configuration, mapper,
+                                                   reducer))
         elif pipes_elem is not None:
             # pipes nodes are not parsed in detail since we haven't used them
             # yet

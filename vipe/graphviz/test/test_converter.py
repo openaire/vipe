@@ -48,27 +48,32 @@ class TestConversionToImage:
 class TestProducedDotGraphsWithVariusDetailLevels:
 
     def test_various_cases_highest_detail_with_input_and_output(self):
-        check('data/converter/pipeline_with_various_cases_dot_versions/highest_detail_level_with_input_and_output.dot',
+        check('data/converter/pipeline_with_various_cases_dot_versions/'
+              'highest_detail_level_with_input_and_output.dot',
               'data/converter/pipeline_with_various_cases.yaml',
               DetailLevel.highest, True, True)
 
     def test_various_cases_highest_detail_with_output(self):
-        check('data/converter/pipeline_with_various_cases_dot_versions/highest_detail_level_with_output.dot',
+        check('data/converter/pipeline_with_various_cases_dot_versions/'
+              'highest_detail_level_with_output.dot',
               'data/converter/pipeline_with_various_cases.yaml',
               DetailLevel.highest, False, True)
 
     def test_various_cases_highest_detail(self):
-        check('data/converter/pipeline_with_various_cases_dot_versions/highest_detail_level.dot',
+        check('data/converter/pipeline_with_various_cases_dot_versions/'
+              'highest_detail_level.dot',
               'data/converter/pipeline_with_various_cases.yaml',
               DetailLevel.highest, False, False)
 
     def test_various_cases_medium_detail_with_input_and_output(self):
-        check('data/converter/pipeline_with_various_cases_dot_versions/medium_detail_level_with_input_and_output.dot',
+        check('data/converter/pipeline_with_various_cases_dot_versions/'
+              'medium_detail_level_with_input_and_output.dot',
               'data/converter/pipeline_with_various_cases.yaml',
               DetailLevel.medium, True, True)
 
     def test_various_cases_lowest_detail_with_input_and_output(self):
-        check('data/converter/pipeline_with_various_cases_dot_versions/lowest_detail_level_with_input_and_output.dot',
+        check('data/converter/pipeline_with_various_cases_dot_versions/'
+              'lowest_detail_level_with_input_and_output.dot',
               'data/converter/pipeline_with_various_cases.yaml',
               DetailLevel.lowest, True, True)
 
@@ -76,7 +81,8 @@ class TestProducedDotGraphsWithVariusDetailLevels:
 class TestSpecialCasesOfNodeNames:
 
     def test_input_and_output_nodes(self):
-        check('data/converter/pipeline_with_input_and_output_nodes-medium_details.dot',
+        check('data/converter/'
+              'pipeline_with_input_and_output_nodes-medium_details.dot',
               'data/converter/pipeline_with_input_and_output_nodes.yaml',
               DetailLevel.medium, False, False)
 
@@ -85,16 +91,20 @@ def convert_to_images(pipeline_path):
     dot = {}
     dot['low'] = convert_to_dot(pipeline_path,
                                 detail_level=DetailLevel.lowest,
-                                show_input_ports=False, show_output_ports=False)
+                                show_input_ports=False,
+                                show_output_ports=False)
     dot['medium'] = convert_to_dot(pipeline_path,
                                    detail_level=DetailLevel.medium,
-                                   show_input_ports=False, show_output_ports=False)
+                                   show_input_ports=False,
+                                   show_output_ports=False)
     dot['medium_io'] = convert_to_dot(pipeline_path,
                                       detail_level=DetailLevel.medium,
-                                      show_input_ports=True, show_output_ports=True)
+                                      show_input_ports=True,
+                                      show_output_ports=True)
     dot['high'] = convert_to_dot(pipeline_path,
                                  detail_level=DetailLevel.highest,
-                                 show_input_ports=True, show_output_ports=True)
+                                 show_input_ports=True,
+                                 show_output_ports=True)
     for name, dot_str in dot.items():
         try:
             converter = ImageConverter(dot_str)
@@ -114,7 +124,8 @@ def check(expected_dot_path, pipeline_path, detail_level,
     assert expected == actual, '{} != {}'.format(expected, actual)
 
 
-def convert_to_dot(pipeline_file_relative_path, detail_level=DetailLevel.medium,
+def convert_to_dot(pipeline_file_relative_path,
+                   detail_level=DetailLevel.medium,
                    show_input_ports=False, show_output_ports=False):
     pipeline_yaml = read_as_string(__name__, pipeline_file_relative_path)
     pipeline = Pipeline.from_yaml_dump(pipeline_yaml)

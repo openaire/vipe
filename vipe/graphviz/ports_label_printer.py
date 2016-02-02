@@ -22,7 +22,7 @@ class PortName:
     def __init__(self, label, internal_name):
         """Args:
             label (string): name of the label to be displayed
-            internal_name (string): name of the label used internally in the 
+            internal_name (string): name of the label used internally in the
                 definition of the dot format. It is unique for given node.
         """
         self.label = label
@@ -40,7 +40,7 @@ class PortsLabelPrinter:
 
     def run(self, labels, input_port_names, output_port_names, color):
         """Args:
-            labels (List[string]): list of labels to be printed in the node. 
+            labels (List[string]): list of labels to be printed in the node.
                 Each label is placed in a separate line.
             input_port_names (List[PortName]): input port names
             output_port_names (List[PortName]): output port names

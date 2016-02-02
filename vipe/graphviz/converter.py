@@ -27,7 +27,7 @@ class Converter:
                  vertical_orientation=True):
         """Args:
             detail_level (DetailLevel): level of presentation details
-            show_input_ports (bool): 
+            show_input_ports (bool):
             show_output_ports (bool):
             vertical_orientation (bool): True if the graph should be drawn
                 from top to bottom, False if it should be drawn from left to
@@ -52,7 +52,7 @@ class Converter:
         Return:
             string: dot format
         """
-        assert self.__already_run == False
+        assert self.__already_run is False
         self.__already_run = True
 
         clean_pipeline = self.__low_score_nodes_remover.run(pipeline)

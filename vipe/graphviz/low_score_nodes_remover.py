@@ -30,17 +30,17 @@ class LowScoreNodesRemover:
         """Remove nodes with importance score value below a threshold.
 
         Apart from the low score, another condition must hold for a given node
-        to be removed. Namely, given node has to lack either input or output 
-        ports. This condition is a substitute of removing nodes with either 
-        no incoming or no outcoming connections. We could later implement a 
-        more precise solution where existing connections are checked 
+        to be removed. Namely, given node has to lack either input or output
+        ports. This condition is a substitute of removing nodes with either
+        no incoming or no outcoming connections. We could later implement a
+        more precise solution where existing connections are checked
         (this makes sense because there might be a situation that we have a
-        port, but it is not connected to anything) 
+        port, but it is not connected to anything)
 
-        Note that we focus here on removing nodes with either incoming or 
+        Note that we focus here on removing nodes with either incoming or
         outcoming connections missing and this is because removing such nodes
         from a graph is easy. However, if required, we might
-        implement a solution that removes also nodes with both 
+        implement a solution that removes also nodes with both
         incoming and outcoming connections present.
 
         Args:
