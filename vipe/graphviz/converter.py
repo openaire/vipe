@@ -52,7 +52,7 @@ class Converter:
         Return:
             string: dot format
         """
-        assert self.__already_run is False
+        assert not self.__already_run
         self.__already_run = True
 
         clean_pipeline = self.__low_score_nodes_remover.run(pipeline)
